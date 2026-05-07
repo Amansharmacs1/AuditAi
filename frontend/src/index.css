@@ -1,0 +1,103 @@
+:root {
+  --navy: #0B3C5D;
+  --light-blue: #4DA8DA;
+  --bg: #F4F9FD;
+}
+body {
+  background: linear-gradient(135deg, #e6f2fb, #f4f9fd);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 800px;
+}
+
+/* Card Styling */
+.card-custom {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* Headings */
+.title {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #6c757d;
+}
+
+/* Buttons */
+.btn-primary-custom {
+  background-color: var(--navy);
+  border: none;
+}
+
+.btn-primary-custom:hover {
+  background-color: #082c44;
+}
+
+.btn-secondary-custom {
+  background-color: var(--light-blue);
+  border: none;
+  color: white;
+}
+
+.btn-secondary-custom:hover {
+  background-color: #3b91c0;
+}
+
+.btn-danger-custom {
+  background-color: #dc3545;
+  border: none;
+}
+
+/* Tool Card */
+.tool-card {
+  background: #ffffff;
+  border: 1px solid #e3eaf0;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+/* Total Box */
+.total-box {
+  background: #e6f2fb;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: var(--navy);
+}
+
+/* Reset */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* App layout */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Content grows */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Optional: remove unexpected spacing */
+.container {
+  margin-bottom: 0 !important;
+}
+
+/* Footer spacing (small) */
+footer {
+  margin-top: auto;
+}
