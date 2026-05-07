@@ -29,19 +29,19 @@ const Form = () => {
     setToolsData(updated);
   };
 
+  // ✅ FIXED VALIDATION
   const validateAll = () => {
     const newErrors = toolsData.map((t) => ({
       tool: t.tool ? "" : "Tool required",
       plan: t.plan ? "" : "Plan required",
       cost: t.cost > 0 ? "" : "Cost must be > 0",
       seats: t.seats > 0 ? "" : "Seats must be > 0",
-    
     }));
 
     setErrors(newErrors);
 
     return newErrors.every(
-      (e) => !e.tool && !e.plan && !e.cost && !e.seats && !e.version
+      (e) => !e.tool && !e.plan && !e.cost && !e.seats
     );
   };
 
@@ -53,7 +53,8 @@ const Form = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/audit", {
+      // 1️⃣ Save to MongoDB
+      await fetch("http://localhost:8080/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,18 +63,29 @@ const Form = () => {
             plan: t.plan,
             cost: Number(t.cost),
             seats: Number(t.seats),
-            
           })),
         }),
       });
 
-      const data = await res.json();
+      // 2️⃣ Get AI summary (IMPORTANT: await this)
+      const aiRes = await fetch("http://localhost:8080/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tools: toolsData }),
+      });
 
-      console.log("Saved:", data);
+      const aiData = await aiRes.json();
 
+      console.log("AI Response:", aiData);
+
+      // 3️⃣ Save AI result
+      localStorage.setItem("auditSummary", aiData.summary);
+
+      // 4️⃣ Navigate AFTER AI completes
       navigate("/result");
+
     } catch (err) {
-      console.error(err);
+      console.error("Submit error:", err);
     }
 
     setLoading(false);
@@ -103,7 +115,7 @@ const Form = () => {
           </button>
 
           <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Analyze"}
+            {loading ? "Analyzing..." : "Analyze"}
           </button>
 
         </form>

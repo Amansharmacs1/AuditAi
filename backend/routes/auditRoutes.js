@@ -62,29 +62,16 @@ router.get("/", async (req, res) => {
 
 
 
-// 🟢 GET - latest audit document
 router.get("/latest", async (req, res) => {
   try {
-    const latestAudit = await Audit.findOne().sort({ createdAt: -1 });
-
-    if (!latestAudit) {
-      return res.json({
-        success: true,
-        data: null,
-      });
-    }
+    const latest = await Audit.findOne().sort({ _id: -1 });
 
     res.json({
       success: true,
-      data: latestAudit,
+      data: latest,
     });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching latest audit",
-      error: error.message,
-    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

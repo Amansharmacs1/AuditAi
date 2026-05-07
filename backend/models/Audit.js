@@ -6,10 +6,12 @@ const toolSchema = new mongoose.Schema({
   cost: Number,
   seats: Number,
   totalCost: Number,
+  
 });
 
 const auditSchema = new mongoose.Schema({
   tools: [toolSchema],
+  summary: String, 
   createdAt: {
     type: Date,
     default: Date.now,

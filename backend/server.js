@@ -21,7 +21,7 @@ connectDB();
 
 // routes
 app.use("/api/audit", auditRoutes);
-
+app.use("/api/ai", require("./routes/aiRoutes"));
 // test route
 app.get("/", (req, res) => {
   res.send("Audit AI Backend Running 🚀");

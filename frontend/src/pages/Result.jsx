@@ -13,35 +13,36 @@ const COLORS = ["#4DA8DA", "#2E8BC0", "#145DA0", "#0B3C5D", "#1B4965"];
 const Result = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState("");
 
- useEffect(() => {
+      useEffect(() => {
   const fetchData = async () => {
     try {
       const res = await fetch("http://localhost:8080/api/audit/latest");
       const json = await res.json();
 
-      const latest = json.data;
+      console.log("API:", json);
 
-      if (!latest) {
-        setData([]);
-        setLoading(false);
-        return;
-      }
+      const latest = json?.data;
+
+      if (!latest) return;
 
       const formatted = latest.tools.map((tool) => ({
         name: tool.tool,
-        value: tool.totalCost,
+        cost: tool.cost,
+        seats: tool.seats,
       }));
 
       setData(formatted);
 
+      // ✅ CORRECT FIX
+      setSummary(latest.summary || "");
+
     } catch (err) {
       console.log(err);
-    }
-
-    setTimeout(() => {
+    } finally {
       setLoading(false);
-    }, 3000);
+    }
   };
 
   fetchData();
@@ -66,17 +67,16 @@ const Result = () => {
     );
   }
 
-  const total = data.reduce((sum, t) => sum + t.value, 0);
+  const total = data.reduce((sum, t) => sum + t.cost, 0);
 
   return (
     <div className="container py-5">
-      <div className="card card-custom p-4">
+      <div className="card p-4">
 
-        <h2 className="title mb-3 text-center">Audit Result</h2>
+        <h2 className="text-center">Audit Result</h2>
 
         <h4 className="text-center mb-4">
-          Total Monthly Spend:{" "}
-          <span style={{ color: "#0B3C5D" }}>${total}</span>
+          Total Monthly Spend: <span>${total}</span>
         </h4>
 
         <div style={{ width: "100%", height: 350 }}>
@@ -84,7 +84,7 @@ const Result = () => {
             <PieChart>
               <Pie
                 data={data}
-                dataKey="value"
+                dataKey="cost"
                 nameKey="name"
                 cx="50%"
                 cy="50%"
@@ -92,9 +92,9 @@ const Result = () => {
                 outerRadius={120}
                 paddingAngle={3}
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell
-                    key={`cell-${index}`}
+                    key={index}
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
@@ -110,17 +110,44 @@ const Result = () => {
           <h5>Breakdown</h5>
           <ul className="list-group">
             {data.map((tool, index) => (
-              <li
-                key={index}
-                className="list-group-item d-flex justify-content-between"
-              >
-                <span>{tool.name}</span>
-                <span>${tool.value}</span>
-              </li>
-            ))}
+  <li key={index} className="list-group-item d-flex justify-content-between">
+    <span>{tool.name}</span>
+    <span>
+      💰 ${tool.cost} | 👥 {tool.seats}
+    </span>
+  </li>
+))}
           </ul>
         </div>
+        {summary && (
+  <div
+    className="p-4 mb-4 rounded"
+    style={{
+      background: "#f4f9fd",
+      borderLeft: "5px solid #0B3C5D",
+    }}
+  >
+    <h5
+      style={{
+        color: "#0B3C5D",
+        fontWeight: "600",
+        marginBottom: "12px",
+      }}
+    >
+      AI Cost Optimization Insight
+    </h5>
 
+    <p
+      style={{
+        whiteSpace: "pre-line",
+        lineHeight: "1.7",
+        marginBottom: 0,
+      }}
+    >
+      {summary}
+    </p>
+  </div>
+)}
       </div>
     </div>
   );
