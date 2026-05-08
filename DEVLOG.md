@@ -29,3 +29,21 @@ AI responses were coming in large paragraphs, so formatting them properly inside
 
 **Plan for tomorrow:**  
 Improve the result page formatting and start adding login/authentication functionality.
+
+---
+
+## Day 3 — 2026-05-08
+
+**Hours worked:** 5
+
+**What I did:**  
+Worked on improving the overall project flow and user authentication. Added email-based login functionality with verification flow and protected routes so only logged-in users can access the main pages. Also connected audits with user emails so every user can view only their own audit history. Improved form validation and fixed issues where audits were not saving correctly in MongoDB. Updated the result page UI by separating AI responses into sections like summary, cost-saving suggestions, and alternative tools instead of showing one large paragraph.
+
+**What I learned:**  
+Learned how protected routes work in React and how to manage user sessions using localStorage. Also understood how to connect frontend authentication flow with backend APIs and MongoDB models. Got better understanding of debugging API validation issues and handling async requests properly.
+
+**Blockers / what I'm stuck on:**  
+Faced issues with Gemini API keys becoming invalid and MongoDB connection failing sometimes. Also had trouble with required fields in Mongoose validation while saving user-specific audits.
+
+**Plan for tomorrow:**  
+Improve the home page UI to make it look more modern and interactive. Add better dashboard visuals, animations, and polish the overall user experience.
