@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Audit = require("../models/Audit"); // ✅ REQUIRED
+const authMiddleware = require("../middleware/authMiddleware");
+
+router.use(authMiddleware);
 
 router.post("/generate", async (req, res) => {
   try {
@@ -56,6 +59,7 @@ console.log(JSON.stringify(data, null, 2));
 
     // ✅ SAVE TO DB (FIXED)
     const newAudit = new Audit({
+      userEmail: req.user.email,
       tools: enrichedTools,
       summary: summary,
     });
@@ -81,7 +85,9 @@ console.log(JSON.stringify(data, null, 2));
 router.get("/latest", async (req, res) => {
   try {
 
-    const latest = await Audit.findOne().sort({
+    const latest = await Audit.findOne({
+      userEmail: req.user.email,
+    }).sort({
       createdAt: -1,
     });
 

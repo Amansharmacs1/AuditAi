@@ -9,13 +9,32 @@ const toolSchema = new mongoose.Schema({
   
 });
 
-const auditSchema = new mongoose.Schema({
-  tools: [toolSchema],
-  summary: String, 
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
 
-module.exports = mongoose.model("Audit", auditSchema);
+const auditSchema = new mongoose.Schema(
+  {
+    userEmail: {
+      type: String,
+      required: true,
+    },
+
+    tools: [
+      {
+        tool: String,
+        plan: String,
+        cost: Number,
+        seats: Number,
+      
+      },
+    ],
+
+    summary: String,
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model(
+  "Audit",
+  auditSchema
+);
