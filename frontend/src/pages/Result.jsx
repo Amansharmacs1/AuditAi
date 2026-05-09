@@ -122,7 +122,7 @@ const Result = () => {
     0
   );
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     const reportTools = data.map((tool) => ({
       tool: tool.name,
       plan: tool.plan || "-",
@@ -130,7 +130,7 @@ const Result = () => {
       cost: tool.cost,
     }));
 
-    downloadSingleAuditPdf({
+    await downloadSingleAuditPdf({
       filename: "audit-result-report.pdf",
       tools: reportTools,
       summary,
@@ -278,7 +278,7 @@ const Result = () => {
             </ul>
           </div>
           <div className="col-md-6">
-            <div style={{ width: "100%", height: 350 }} className="bg-light rounded-4 p-3 d-flex align-items-center justify-content-center">
+            <div id="pdf-pie-chart" style={{ width: "100%", height: 350 }} className="bg-light rounded-4 p-3 d-flex align-items-center justify-content-center">
               {data.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>

@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 
 const addHeader = (doc, title, subtitle) => {
   doc.setFontSize(18);
@@ -90,7 +91,7 @@ const measureAndRenderMarkdown = (doc, text, startX, startY, maxWidth, doRender 
   return currentY;
 };
 
-export const downloadSingleAuditPdf = ({
+export const downloadSingleAuditPdf = async ({
   filename,
   auditDate,
   tools = [],
@@ -118,9 +119,66 @@ export const downloadSingleAuditPdf = ({
   );
   doc.text(`Total Monthly Spend: $${total}`, 14, 42);
 
-  addSectionTitle(doc, 52, "Tool Breakdown");
+  // --- VISUAL GRAPH (Top 5 Spend) ---
+  let currentY = 54;
+  addSectionTitle(doc, currentY, "Top Spend by Tool");
+  currentY += 8;
+
+  const sortedTools = [...tools].sort((a, b) => Number(b.cost || 0) - Number(a.cost || 0));
+  const maxCost = Math.max(...sortedTools.map(t => Number(t.cost || 0)), 1);
+  const maxBarWidth = 100; // maximum width in mm for the bar
+
+  sortedTools.slice(0, 5).forEach((tool) => {
+    const cost = Number(tool.cost || 0);
+    let barWidth = (cost / maxCost) * maxBarWidth;
+    if (barWidth < 2 && cost > 0) barWidth = 2; // minimum visible bar
+
+    // Tool Name Label
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    const label = tool.tool || tool.name || "-";
+    // truncate long names
+    const shortLabel = label.length > 20 ? label.substring(0, 18) + "..." : label;
+    doc.text(shortLabel, 14, currentY + 4);
+
+    // Render Bar
+    doc.setFillColor(46, 139, 192); // #2E8BC0
+    doc.rect(60, currentY, barWidth, 6, "F");
+
+    // Cost Label Next to Bar
+    doc.setTextColor(90, 90, 90);
+    doc.text(`$${cost}`, 60 + barWidth + 3, currentY + 4);
+
+    currentY += 8;
+  });
+
+  currentY += 10;
+
+  // --- EMBED DOUGHNUT CHART (If available in DOM) ---
+  const pieChartEl = document.getElementById("pdf-pie-chart");
+  if (pieChartEl) {
+    try {
+      const canvas = await html2canvas(pieChartEl, { scale: 2 }); // scale for better resolution
+      const imgData = canvas.toDataURL("image/png");
+      
+      // Calculate width and height to fit on page (aspect ratio)
+      const imgWidth = 100;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      // Center the image
+      const xOffset = (210 - imgWidth) / 2; // A4 width is 210mm
+      
+      doc.addImage(imgData, "PNG", xOffset, currentY, imgWidth, imgHeight);
+      currentY += imgHeight + 10;
+    } catch (e) {
+      console.error("Failed to capture pie chart for PDF:", e);
+    }
+  }
+
+  // --- TABLE ---
+  addSectionTitle(doc, currentY, "Detailed Tool Breakdown");
   autoTable(doc, {
-    startY: 56,
+    startY: currentY + 4,
     head: [["Tool", "Plan", "Seats", "Monthly Cost"]],
     body: tools.map((tool) => [
       tool.tool || tool.name || "-",
@@ -132,7 +190,7 @@ export const downloadSingleAuditPdf = ({
     headStyles: { fillColor: [20, 93, 160] },
   });
 
-  let currentY = doc.lastAutoTable.finalY + 10;
+  currentY = doc.lastAutoTable.finalY + 10;
   if (currentY + 20 > 280) {
     doc.addPage();
     currentY = 20;

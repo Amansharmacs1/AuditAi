@@ -3,6 +3,7 @@ import React from "react";
 import {
   NavLink,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import {
   clearSessionAuth,
@@ -12,6 +13,7 @@ import {
 const Navbar = () => {
 
   const navigate = useNavigate();
+  const location = useLocation(); // Forces component to re-render on route change
 
   const token = getSessionToken();
 

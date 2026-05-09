@@ -9,6 +9,7 @@ import {
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Result from "./pages/Result";
+import ShareResult from "./pages/ShareResult";
 
 import Login from "./pages/Login";
 import Verify from "./pages/Verify";
@@ -70,11 +71,12 @@ const App = () => {
             {/* PROTECTED ROUTES */}
             <Route
               path="/"
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
+              element={<Home />}
+            />
+
+            <Route
+              path="/share/:shareId"
+              element={<ShareResult />}
             />
 
             <Route
@@ -103,7 +105,7 @@ const App = () => {
     </ProtectedRoute>
   }
 />
-<Route path="*" element={NotFound} />
+<Route path="*" element={<NotFound />} />
 
           </Routes>
 

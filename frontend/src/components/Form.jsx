@@ -11,6 +11,7 @@ import {
   getSessionToken,
 } from "../utils/authSession";
 import { primaryUseCaseOptions } from "../utils/toolPlans";
+import LeadCaptureModal from "./LeadCaptureModal";
 
 const STORAGE_KEY = "auditai_spend_form_v1";
 
@@ -43,7 +44,7 @@ const Form = ({ initialValues = {} }) => {
     tools: {},
   });
   const [didSubmit, setDidSubmit] = useState(false);
-
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -236,7 +237,6 @@ const Form = ({ initialValues = {} }) => {
   // =========================
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     setDidSubmit(true);
 
@@ -245,134 +245,9 @@ const Form = ({ initialValues = {} }) => {
       return;
     }
 
-    setLoading(true);
-
-    try {
-
-      const formattedTools =
-        formState.tools.map((t) => ({
-          tool: t.tool.trim(),
-          plan: t.plan.trim(),
-          cost: Number(t.cost),
-          seats: Number(t.seats),
-        }));
-
-      // ✅ GET USER EMAIL
-      const userEmail =
-        getSessionEmail();
-      const token = getSessionToken();
-
-      if (!userEmail || !token) {
-
-        alert(
-          "Please login first"
-        );
-
-        navigate("/login");
-
-        return;
-      }
-
-      // =========================
-      // SAVE AUDIT
-      // =========================
-
-      await fetch(
-        "http://localhost:8080/api/audit",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            tools:
-              formattedTools,
-
-            teamSize:
-              Number(formState.teamSize),
-            primaryUseCase:
-              formState.primaryUseCase,
-          }),
-        }
-      );
-
-      // =========================
-      // AI ANALYSIS
-      // =========================
-
-      const aiRes = await fetch(
-        "http://localhost:8080/api/ai/generate",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            tools:
-              formattedTools,
-
-            teamSize:
-              Number(formState.teamSize),
-            primaryUseCase:
-              formState.primaryUseCase,
-          }),
-        }
-      );
-
-      const aiData =
-        await aiRes.json();
-
-      // =========================
-      // NAVIGATE TO RESULT
-      // =========================
-
-      navigate("/result", {
-
-        state: {
-
-          audit: {
-
-            tools:
-              formattedTools.map(
-                (t) => ({
-                  ...t,
-
-                  totalCost:
-                    t.cost *
-                    t.seats,
-                })
-              ),
-            recommendations: aiData.data?.recommendations || [],
-            totalSavings: aiData.data?.totalSavings || 0,
-          },
-
-          summary:
-            aiData.summary ||
-            "No executive summary generated",
-        },
-      });
-
-      localStorage.removeItem(STORAGE_KEY);
-
-    } catch (err) {
-
-      console.log(
-        "SUBMIT ERROR:",
-        err
-      );
-
-    } finally {
-
-      setLoading(false);
-    }
+    // Instead of checking auth and immediately fetching API,
+    // we show the lead capture modal if validation passes!
+    setShowModal(true);
   };
 
   const summary = useMemo(() => {
@@ -608,6 +483,16 @@ const Form = ({ initialValues = {} }) => {
 
       </div>
 
+      <LeadCaptureModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        toolsData={formState.tools.map(t => ({
+          tool: t.tool.trim(),
+          plan: t.plan.trim(),
+          cost: Number(t.cost),
+          seats: Number(t.seats),
+        }))}
+      />
     </div>
   );
 };
