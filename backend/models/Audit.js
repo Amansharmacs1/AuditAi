@@ -23,8 +23,22 @@ const auditSchema = new mongoose.Schema(
         plan: String,
         cost: Number,
         seats: Number,
-      
+        totalCost: Number
       },
+    ],
+    
+    totalSavings: {
+      type: Number,
+      default: 0
+    },
+
+    recommendations: [
+      {
+        tool: String,
+        action: String,
+        savings: Number,
+        reason: String
+      }
     ],
 
     summary: String,

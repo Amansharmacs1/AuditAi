@@ -272,9 +272,9 @@ const History = () => {
                   ))}
 
                   <div className="mt-4">
-                    <h6 className="fw-bold mb-2">
-                      AI Summary
-                    </h6>
+                    <h5 className="mb-3 text-dark fw-bold">
+                      Executive Summary
+                    </h5>
                     <div
                       className="p-3 rounded"
                       style={{
@@ -284,8 +284,9 @@ const History = () => {
                         whiteSpace: "pre-line",
                       }}
                     >
-                      {audit.summary ||
-                        "No AI summary found for this audit."}
+                      {audit.summary
+                        ? audit.summary.replace(/\*\*/g, '').replace(/^#+\s*/gm, '').replace(/^[\*\-]\s+/gm, '• ')
+                        : "No executive summary found for this audit."}
                     </div>
                   </div>
                 </>

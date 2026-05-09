@@ -10,6 +10,9 @@ const addHeader = (doc, title, subtitle) => {
   doc.setTextColor(90, 90, 90);
   doc.text(subtitle, 14, 24);
 
+  doc.setTextColor(11, 60, 93);
+  doc.text("Contact: amansharmacs11@gmail.com", 140, 24);
+
   doc.setDrawColor(220, 220, 220);
   doc.line(14, 28, 196, 28);
 };
@@ -18,6 +21,73 @@ const addSectionTitle = (doc, y, text) => {
   doc.setFontSize(12);
   doc.setTextColor(20, 93, 160);
   doc.text(text, 14, y);
+};
+
+const measureAndRenderMarkdown = (doc, text, startX, startY, maxWidth, doRender = true) => {
+  let currentY = startY;
+  const paragraphs = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+  const checkPageBreak = (needed = 0) => {
+    if (currentY + needed > 280) {
+      if (doRender) {
+        doc.addPage();
+      }
+      currentY = 20;
+    }
+  };
+
+  paragraphs.forEach(paragraph => {
+    checkPageBreak(10);
+    let isHeading = false;
+    let lineText = paragraph;
+
+    if (lineText.startsWith('#')) {
+      isHeading = true;
+      doc.setFontSize(11);
+    } else {
+      doc.setFontSize(10);
+    }
+    
+    // Remove markdown heading (#)
+    lineText = lineText.replace(/^#+\s*/, '');
+    
+    // Replace bullet (* or -) with real bullet character
+    if (/^[\*\-]\s+/.test(lineText)) {
+      lineText = lineText.replace(/^[\*\-]\s+/, '• ');
+    }
+
+    const parts = lineText.split(/(\*\*.*?\*\*)/g);
+    let currentX = startX;
+
+    parts.forEach(part => {
+      if (!part) return;
+      let isBold = false;
+      let printText = part;
+      
+      if (part.startsWith('**') && part.endsWith('**')) {
+        isBold = true;
+        printText = part.slice(2, -2);
+      }
+      
+      doc.setFont("helvetica", (isHeading || isBold) ? "bold" : "normal");
+      
+      const tokens = printText.match(/(\S+|\s+)/g) || [];
+      tokens.forEach(token => {
+        const tokenWidth = doc.getTextWidth(token);
+        if (token.trim() !== '' && currentX + tokenWidth > startX + maxWidth) {
+          currentY += 5;
+          currentX = startX;
+          checkPageBreak(5);
+        }
+        if (doRender && token.trim() !== '') {
+          doc.text(token, currentX, currentY);
+        }
+        currentX += tokenWidth;
+      });
+    });
+    currentY += 7;
+  });
+  return currentY;
 };
 
 export const downloadSingleAuditPdf = ({
@@ -62,16 +132,19 @@ export const downloadSingleAuditPdf = ({
     headStyles: { fillColor: [20, 93, 160] },
   });
 
-  const nextY = doc.lastAutoTable.finalY + 10;
-  addSectionTitle(doc, nextY, "AI Summary");
+  let currentY = doc.lastAutoTable.finalY + 10;
+  if (currentY + 20 > 280) {
+    doc.addPage();
+    currentY = 20;
+  }
+  
+  addSectionTitle(doc, currentY, "Executive Summary");
 
-  const summaryLines = doc.splitTextToSize(
-    summary || "No AI summary available for this audit.",
-    180
-  );
-  doc.setTextColor(40, 40, 40);
-  doc.setFontSize(10);
-  doc.text(summaryLines, 14, nextY + 6);
+  const summaryText = summary || "No summary available for this audit.";
+  
+  doc.setTextColor(50, 50, 50);
+  measureAndRenderMarkdown(doc, summaryText, 14, currentY + 8, 180, true);
+  doc.setFont("helvetica", "normal");
 
   doc.save(safeFilename);
 };
@@ -114,8 +187,7 @@ export const downloadHistoryPdf = (audits = []) => {
   let y = doc.lastAutoTable.finalY + 10;
 
   audits.forEach((audit, index) => {
-    const requiredHeight = 42;
-    if (y + requiredHeight > 280) {
+    if (y + 30 > 280) {
       doc.addPage();
       y = 20;
     }
@@ -134,16 +206,15 @@ export const downloadHistoryPdf = (audits = []) => {
       y + 6
     );
     doc.text(`Monthly Total: $${total}`, 14, y + 12);
-    doc.text(
-      `AI Summary: ${(audit.summary || "No summary").slice(0, 140)}${
-        (audit.summary || "").length > 140 ? "..." : ""
-      }`,
-      14,
-      y + 18
-    );
+    let summaryText = audit.summary || "No summary available.";
+    
+    doc.setTextColor(50, 50, 50);
+    y = measureAndRenderMarkdown(doc, summaryText, 14, y + 22, 180, true);
+    doc.setFont("helvetica", "normal");
 
-    y += 28;
+    y += 10;
   });
 
   doc.save("audit-history-report.pdf");
 };
+

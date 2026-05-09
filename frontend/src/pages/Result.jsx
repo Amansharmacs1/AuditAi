@@ -13,91 +13,6 @@ import { downloadSingleAuditPdf } from "../utils/pdfReport";
 
 const COLORS = ["#4DA8DA", "#2E8BC0", "#145DA0", "#0B3C5D", "#1B4965"];
 
-const renderInlineMarkdown = (text) => {
-  const parts = text.split(/(\*\*.*?\*\*)/g);
-
-  return parts.map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return (
-        <strong key={index}>
-          {part.slice(2, -2)}
-        </strong>
-      );
-    }
-
-    return (
-      <React.Fragment key={index}>
-        {part}
-      </React.Fragment>
-    );
-  });
-};
-
-const renderRichSummary = (text) => {
-  if (!text) return null;
-
-  const lines = text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  const content = [];
-  let bulletBuffer = [];
-
-  const flushBullets = () => {
-    if (bulletBuffer.length === 0) return;
-
-    content.push(
-      <ul key={`bullets-${content.length}`} className="mb-3">
-        {bulletBuffer.map((item, index) => (
-          <li key={index} style={{ lineHeight: "1.7" }}>
-            {renderInlineMarkdown(item)}
-          </li>
-        ))}
-      </ul>
-    );
-
-    bulletBuffer = [];
-  };
-
-  lines.forEach((line) => {
-    // # Heading / ## Sub-heading support
-    if (line.startsWith("#")) {
-      flushBullets();
-
-      const headingText = line.replace(/^#+\s*/, "");
-      content.push(
-        <h5
-          key={`heading-${content.length}`}
-          className="mt-3 mb-2"
-          style={{ color: "#0B3C5D", fontWeight: 700 }}
-        >
-          {renderInlineMarkdown(headingText)}
-        </h5>
-      );
-      return;
-    }
-
-    // -, *, 1. bullet support
-    if (/^(-|\*|\d+\.)\s+/.test(line)) {
-      bulletBuffer.push(line.replace(/^(-|\*|\d+\.)\s+/, ""));
-      return;
-    }
-
-    flushBullets();
-
-    content.push(
-      <p key={`para-${content.length}`} className="mb-2" style={{ lineHeight: "1.8" }}>
-        {renderInlineMarkdown(line)}
-      </p>
-    );
-  });
-
-  flushBullets();
-
-  return content;
-};
-
 const Result = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -107,13 +22,14 @@ const Result = () => {
 
   // AI sections
   const [summary, setSummary] = useState("");
-  const [savings, setSavings] = useState([]);
-  const [alternatives, setAlternatives] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [totalSavings, setTotalSavings] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const stateTools = location.state?.audit?.tools || [];
+        const stateAudit = location.state?.audit;
+        const stateTools = stateAudit?.tools || [];
         const stateSummary = location.state?.summary || "";
 
         // Show freshly generated response immediately after submit.
@@ -121,14 +37,14 @@ const Result = () => {
           const formatted = stateTools.map((tool) => ({
             name: tool.tool,
             plan: tool.plan || "-",
-            cost: Number(tool.cost ?? 0),
+            cost: Number(tool.totalCost ?? 0),
             seats: Number(tool.seats ?? 0),
           }));
 
           setData(formatted);
           setSummary(stateSummary);
-          setSavings([]);
-          setAlternatives([]);
+          setRecommendations(stateAudit.recommendations || []);
+          setTotalSavings(stateAudit.totalSavings || 0);
           setLoading(false);
           return;
         }
@@ -164,14 +80,14 @@ const Result = () => {
         const formatted = latest.tools.map((tool) => ({
           name: tool.tool,
           plan: tool.plan || "-",
-          cost: Number(tool.cost ?? 0),
+          cost: Number(tool.totalCost ?? (tool.cost * tool.seats)),
           seats: tool.seats,
         }));
 
         setData(formatted);
         setSummary(latest.summary || "");
-        setSavings(latest.costSavingSuggestions || []);
-        setAlternatives(latest.alternativeTools || []);
+        setRecommendations(latest.recommendations || []);
+        setTotalSavings(latest.totalSavings || 0);
       } catch (err) {
         console.log(err);
       } finally {
@@ -205,6 +121,7 @@ const Result = () => {
     (sum, t) => sum + Number(t.cost || 0),
     0
   );
+
   const handleDownloadPdf = () => {
     const reportTools = data.map((tool) => ({
       tool: tool.name,
@@ -223,170 +140,176 @@ const Result = () => {
 
   return (
     <div className="container py-5">
-      <div className="card p-4 shadow-sm border-0">
+      <div className="card p-4 p-md-5 shadow border-0 rounded-4">
 
-        {/* HEADER */}
-        <div className="text-center mb-4">
-          <h2 className="fw-bold">Audit Result</h2>
-
-          <h4 className="mt-3">
-            Total Monthly Spend:{" "}
-            <span style={{ color: "#145DA0" }}>
-              ${total}
-            </span>
-          </h4>
+        {/* HERO: TOTAL SAVINGS */}
+        <div className="text-center mb-5 text-white p-4 p-md-5 rounded-4 shadow-sm" style={{ background: "linear-gradient(135deg, #0B3C5D, #145DA0)" }}>
+          <h2 className="fw-bold mb-4 opacity-75">Audit Results Ready</h2>
+          <div className="row justify-content-center">
+            <div className="col-md-5 mb-4 mb-md-0 border-md-end border-light border-opacity-25">
+              <p className="mb-2 fs-5 text-light opacity-75">Total Monthly Savings</p>
+              <h1 className="display-3 fw-bold text-info" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
+                ${totalSavings}
+              </h1>
+            </div>
+            <div className="col-md-5">
+              <p className="mb-2 fs-5 text-light opacity-75">Total Annual Savings</p>
+              <h1 className="display-3 fw-bold text-success" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.2)", color: "#4ade80" }}>
+                ${totalSavings * 12}
+              </h1>
+            </div>
+          </div>
           <button
-            className="btn btn-outline-primary mt-3"
+            className="btn btn-light btn-lg mt-4 fw-semibold shadow-sm px-5"
             onClick={handleDownloadPdf}
           >
             Download PDF Report
           </button>
         </div>
 
-        {/* PIE CHART */}
-        <div style={{ width: "100%", height: 350 }}>
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie
-                data={data}
-                dataKey="cost"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={80}
-                outerRadius={120}
-                paddingAngle={3}
-              >
-                {data.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* BREAKDOWN */}
-        <div className="mt-5">
-          <h4 className="mb-3">Tool Breakdown</h4>
-
-          <ul className="list-group">
-            {data.map((tool, index) => (
-              <li
-                key={index}
-                className="list-group-item d-flex justify-content-between align-items-center"
-              >
-                <div>
-                  <strong>{tool.name}</strong>
-                </div>
-
-                <div>
-                  💰 ${tool.cost} | 👥 {tool.seats}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* SUMMARY */}
+        {/* AI SUMMARY */}
         {summary && (
-          <div
-            className="p-4 mt-5 rounded"
-            style={{
-              background: "#f4f9fd",
-              borderLeft: "5px solid #145DA0",
-            }}
-          >
-            <h4
-              style={{
-                color: "#145DA0",
-                fontWeight: "700",
-                marginBottom: "15px",
-              }}
-            >
-              AI Summary
-            </h4>
+          <div className="p-4 mb-5 rounded bg-light border-start border-5 border-primary shadow-sm">
+            <h5 className="fw-bold text-primary mb-3">Executive Summary</h5>
+            <p className="mb-0" style={{ fontSize: "1.1rem", lineHeight: "1.8", color: "#333" }}>{summary}</p>
+          </div>
+        )}
 
-            <div style={{ marginBottom: 0 }}>
-              {renderRichSummary(summary)}
+        {/* UPSELL / LEAD CAPTURE */}
+        {totalSavings >= 500 && (
+          <div className="alert alert-warning p-4 shadow-sm rounded-4 mb-5" style={{ backgroundColor: "#fffbeb", borderColor: "#fde68a" }}>
+            <h4 className="alert-heading fw-bold" style={{ color: "#b45309" }}>🚀 Unlock even more savings with Credex</h4>
+            <p className="mb-0 text-dark fs-5" style={{ lineHeight: "1.6" }}>
+              You have over <strong>$500/mo</strong> in potential savings! Join <strong>Credex</strong> to automatically capture these savings, negotiate better vendor rates, and secure massive AWS/Azure credits for your startup. 
+              <br /><a href="#" className="alert-link mt-2 d-inline-block fw-bold text-decoration-underline" style={{ color: "#d97706" }}>Get started with Credex today →</a>
+            </p>
+          </div>
+        )}
+
+        {(totalSavings > 0 && totalSavings < 500) && (
+          <div className="alert alert-info p-4 shadow-sm rounded-4 mb-5" style={{ backgroundColor: "#eff6ff", borderColor: "#bfdbfe" }}>
+            <h4 className="alert-heading fw-bold" style={{ color: "#1d4ed8" }}>💡 We found optimization opportunities.</h4>
+            <p className="mb-4 text-dark fs-5" style={{ lineHeight: "1.6" }}>
+              There is some waste in your current stack. Review the breakdown below to capture your <strong>${totalSavings}/mo</strong> in savings.
+            </p>
+            <div className="bg-white p-4 rounded-3 border" style={{ borderColor: "#bfdbfe" }}>
+              <p className="mb-3 fw-bold text-dark fs-5">Maximize your future savings</p>
+              <form className="d-flex flex-column flex-md-row gap-3">
+                <input type="email" className="form-control form-control-lg" placeholder="Enter your email" required />
+                <button type="submit" className="btn btn-primary btn-lg px-4 fw-bold" style={{ backgroundColor: "#2563eb", border: "none" }}>Notify Me</button>
+              </form>
+              <small className="text-muted d-block mt-3">Get notified when new optimizations or startup credits apply to your stack.</small>
             </div>
           </div>
         )}
 
-        {/* COST SAVING */}
-        {savings.length > 0 && (
-          <div
-            className="p-4 mt-4 rounded"
-            style={{
-              background: "#f9fcff",
-              borderLeft: "5px solid #2E8BC0",
-            }}
-          >
-            <h4
-              style={{
-                color: "#145DA0",
-                fontWeight: "700",
-                marginBottom: "15px",
-              }}
-            >
-              Cost Saving Suggestions
-            </h4>
+        {totalSavings === 0 && (
+          <div className="alert alert-success p-4 shadow-sm rounded-4 mb-5" style={{ backgroundColor: "#f0fdf4", borderColor: "#bbf7d0" }}>
+            <h4 className="alert-heading fw-bold" style={{ color: "#15803d" }}>🎯 You're spending well.</h4>
+            <p className="mb-4 text-dark fs-5" style={{ lineHeight: "1.6" }}>
+              We found zero waste in your stack. Your plan selection and seat management are highly optimal!
+            </p>
+            <div className="bg-white p-4 rounded-3 border" style={{ borderColor: "#bbf7d0" }}>
+              <p className="mb-3 fw-bold text-dark fs-5">Stay ahead of price hikes</p>
+              <form className="d-flex flex-column flex-md-row gap-3">
+                <input type="email" className="form-control form-control-lg" placeholder="Enter your email" required />
+                <button type="submit" className="btn btn-success btn-lg px-4 fw-bold" style={{ backgroundColor: "#16a34a", border: "none" }}>Notify Me</button>
+              </form>
+              <small className="text-muted d-block mt-3">Get notified when new optimizations or startup credits apply to your stack.</small>
+            </div>
+          </div>
+        )}
 
-            <ul className="mb-0">
-              {savings.map((item, index) => (
+        {/* PER-TOOL BREAKDOWN */}
+        <div className="mb-5 mt-5">
+          <h3 className="mb-4 fw-bold" style={{ color: "#0B3C5D" }}>Optimization Breakdown</h3>
+          {recommendations.length > 0 ? (
+            <div className="row g-4">
+              {recommendations.map((rec, idx) => (
+                <div key={idx} className="col-12">
+                  <div className="card shadow-sm border-0 h-100 rounded-4 overflow-hidden" style={{ backgroundColor: "#f8f9fa" }}>
+                    <div className="card-body p-4 p-md-5">
+                      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                        <h4 className="card-title fw-bold mb-0 text-primary">{rec.tool}</h4>
+                        <span className="badge bg-success fs-5 px-4 py-2 rounded-pill shadow-sm">Save ${rec.savings}/mo</span>
+                      </div>
+                      <div className="mb-4 p-3 bg-white rounded shadow-sm d-flex align-items-center border-start border-4 border-warning">
+                        <span className="fw-bold text-dark fs-5 me-2">Recommended Action:</span> 
+                        <span className="text-danger fw-bold fs-5">{rec.action}</span>
+                      </div>
+                      <p className="card-text text-secondary mb-0" style={{ fontSize: "1.1rem", lineHeight: "1.7" }}>
+                        {rec.reason}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center p-5 bg-light rounded-4 text-muted border">
+              <span className="fs-5">No specific tool optimizations found.</span>
+            </div>
+          )}
+        </div>
+
+        {/* CURRENT SPEND OVERVIEW */}
+        <hr className="my-5 opacity-25" />
+        <div className="row mt-5">
+          <div className="col-md-6 mb-4 mb-md-0">
+            <h4 className="fw-bold mb-4" style={{ color: "#0B3C5D" }}>Current Spend Overview</h4>
+            <div className="p-4 bg-light rounded-4 mb-4">
+              <p className="mb-1 text-muted">Total Monthly Spend</p>
+              <h3 className="fw-bold m-0">${total}</h3>
+            </div>
+            <ul className="list-group list-group-flush rounded-3 shadow-sm border">
+              {data.map((tool, index) => (
                 <li
                   key={index}
-                  style={{
-                    marginBottom: "12px",
-                    lineHeight: "1.7",
-                  }}
+                  className="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom"
                 >
-                  {item}
+                  <div className="fw-semibold">
+                    {tool.name} <span className="text-muted fw-normal ms-1">({tool.plan})</span>
+                  </div>
+                  <div className="fw-bold">
+                    ${tool.cost}
+                  </div>
                 </li>
               ))}
             </ul>
           </div>
-        )}
-
-        {/* ALTERNATIVES */}
-        {alternatives.length > 0 && (
-          <div
-            className="p-4 mt-4 rounded"
-            style={{
-              background: "#f7fbff",
-              borderLeft: "5px solid #0B3C5D",
-            }}
-          >
-            <h4
-              style={{
-                color: "#0B3C5D",
-                fontWeight: "700",
-                marginBottom: "15px",
-              }}
-            >
-              Alternative Tools
-            </h4>
-
-            <ul className="mb-0">
-              {alternatives.map((tool, index) => (
-                <li
-                  key={index}
-                  style={{
-                    marginBottom: "12px",
-                    lineHeight: "1.7",
-                  }}
-                >
-                  {tool}
-                </li>
-              ))}
-            </ul>
+          <div className="col-md-6">
+            <div style={{ width: "100%", height: 350 }} className="bg-light rounded-4 p-3 d-flex align-items-center justify-content-center">
+              {data.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      dataKey="cost"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={110}
+                      paddingAngle={5}
+                    >
+                      {data.map((_, index) => (
+                         <Cell
+                          key={index}
+                          fill={COLORS[index % COLORS.length]}
+                          stroke="none"
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <span className="text-muted">No data to display</span>
+              )}
+            </div>
           </div>
-        )}
+        </div>
 
       </div>
     </div>

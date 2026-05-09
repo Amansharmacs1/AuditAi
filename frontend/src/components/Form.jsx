@@ -350,11 +350,13 @@ const Form = ({ initialValues = {} }) => {
                     t.seats,
                 })
               ),
+            recommendations: aiData.data?.recommendations || [],
+            totalSavings: aiData.data?.totalSavings || 0,
           },
 
           summary:
             aiData.summary ||
-            "No AI summary generated",
+            "No executive summary generated",
         },
       });
 
