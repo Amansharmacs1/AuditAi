@@ -47,3 +47,21 @@ Faced issues with Gemini API keys becoming invalid and MongoDB connection failin
 
 **Plan for tomorrow:**  
 Improve the home page UI to make it look more modern and interactive. Add better dashboard visuals, animations, and polish the overall user experience.
+
+---
+
+## Day 4 — 2026-05-09
+
+**Hours worked:** 6
+
+**What I did:**
+Focused mainly on improving the frontend experience and making the project feel more polished overall. Redesigned parts of the home page UI with better layouts, gradients, hover effects, and cleaner sections to make the platform look more modern. Added lead capture functionality before showing audit results and connected it with backend storage. Also worked on generating public shareable audit links and started building the public result page where users can share their optimization reports. Improved the audit calculation logic to make savings recommendations more realistic and business-oriented instead of overly aggressive AI-generated outputs.
+
+**What I learned:**
+Learned how public/private audit sharing flows work and how to safely expose audit data without leaking sensitive user information. Also got better understanding of conditional rendering, reusable UI components, and improving user experience through frontend design patterns.
+
+**Blockers / what I'm stuck on:**
+Faced issues with package imports and dependency conflicts while integrating new UI components. Also spent time debugging some incorrect savings calculations and unrealistic AI recommendations.
+
+**Plan for tomorrow:**
+Complete the shareable audit page flow, improve responsiveness for mobile devices, and add final polish like loading states, animations, and better error handling across the app.
