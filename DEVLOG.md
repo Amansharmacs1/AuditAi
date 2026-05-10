@@ -65,3 +65,15 @@ Faced issues with package imports and dependency conflicts while integrating new
 
 **Plan for tomorrow:**
 Complete the shareable audit page flow, improve responsiveness for mobile devices, and add final polish like loading states, animations, and better error handling across the app.
+
+---
+
+## Day 5 — 2026-05-10
+
+**Hours worked:** 2
+
+**What I did:**
+Focused on polishing and improving the authentication flow across the platform. Refined login, signup, and protected route handling to make the user experience smoother and more reliable. Improved session handling and validation logic to reduce unnecessary errors during authentication. Also cleaned up some backend auth-related code and tested different user flows like login persistence, logout handling, and access control for protected pages.
+
+**What I learned:**
+Learned more about managing authentication state efficiently in React and handling edge cases in protected routes and token-based session
