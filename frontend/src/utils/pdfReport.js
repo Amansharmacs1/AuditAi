@@ -91,6 +91,85 @@ const measureAndRenderMarkdown = (doc, text, startX, startY, maxWidth, doRender 
   return currentY;
 };
 
+const generateDoughnutChartImage = (tools) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 600;
+  canvas.height = 300;
+  const ctx = canvas.getContext("2d");
+
+  const COLORS = ["#4DA8DA", "#2E8BC0", "#145DA0", "#0B3C5D", "#1B4965", "#A8DADC", "#457B9D"];
+
+  const totalCost = tools.reduce((sum, t) => sum + Number(t.cost || 0), 0);
+  let startAngle = -Math.PI / 2;
+  
+  const cx = 150;
+  const cy = 150;
+  const outerRadius = 120;
+  const innerRadius = 70;
+
+  // Clear background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 600, 300);
+
+  if (totalCost > 0) {
+    tools.forEach((tool, index) => {
+      const cost = Number(tool.cost || 0);
+      if (cost === 0) return;
+      const sliceAngle = (cost / totalCost) * 2 * Math.PI;
+      
+      ctx.fillStyle = COLORS[index % COLORS.length];
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, outerRadius, startAngle, startAngle + sliceAngle);
+      ctx.closePath();
+      ctx.fill();
+      
+      startAngle += sliceAngle;
+    });
+  } else {
+    ctx.fillStyle = "#e0e0e0";
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerRadius, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  // Cut out inner circle
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerRadius, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Add text in the middle
+  ctx.fillStyle = "#333333";
+  ctx.font = "bold 24px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Total", cx, cy - 15);
+  ctx.fillText(`$${totalCost}`, cx, cy + 15);
+
+  // Draw legend
+  const legendX = 320;
+  let legendY = 50;
+  tools.slice(0, 8).forEach((tool, index) => {
+    ctx.fillStyle = COLORS[index % COLORS.length];
+    ctx.fillRect(legendX, legendY - 12, 15, 15);
+    
+    ctx.fillStyle = "#333333";
+    ctx.font = "16px Arial";
+    ctx.textAlign = "left";
+    const toolName = tool.tool || tool.name || "Unknown";
+    const cost = Number(tool.cost || 0);
+    const perc = totalCost > 0 ? ((cost / totalCost) * 100).toFixed(1) : 0;
+    
+    let shortName = toolName.length > 15 ? toolName.substring(0, 15) + "..." : toolName;
+    ctx.fillText(`${shortName} - $${cost} (${perc}%)`, legendX + 25, legendY);
+    
+    legendY += 30;
+  });
+
+  return canvas.toDataURL("image/png");
+};
+
 export const downloadSingleAuditPdf = async ({
   filename,
   auditDate,
@@ -154,25 +233,20 @@ export const downloadSingleAuditPdf = async ({
 
   currentY += 10;
 
-  // --- EMBED DOUGHNUT CHART (If available in DOM) ---
-  const pieChartEl = document.getElementById("pdf-pie-chart");
-  if (pieChartEl) {
-    try {
-      const canvas = await html2canvas(pieChartEl, { scale: 2 }); // scale for better resolution
-      const imgData = canvas.toDataURL("image/png");
-      
-      // Calculate width and height to fit on page (aspect ratio)
-      const imgWidth = 100;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      // Center the image
-      const xOffset = (210 - imgWidth) / 2; // A4 width is 210mm
-      
-      doc.addImage(imgData, "PNG", xOffset, currentY, imgWidth, imgHeight);
-      currentY += imgHeight + 10;
-    } catch (e) {
-      console.error("Failed to capture pie chart for PDF:", e);
-    }
+  // --- EMBED DOUGHNUT CHART ---
+  try {
+    const imgData = generateDoughnutChartImage(tools);
+    const imgWidth = 140; // width in mm
+    const imgHeight = 70; // height in mm (aspect ratio 2:1 since canvas is 600x300)
+    const xOffset = (210 - imgWidth) / 2;
+    
+    addSectionTitle(doc, currentY, "Spend Distribution");
+    currentY += 8;
+    
+    doc.addImage(imgData, "PNG", xOffset, currentY, imgWidth, imgHeight);
+    currentY += imgHeight + 10;
+  } catch (e) {
+    console.error("Failed to add doughnut chart:", e);
   }
 
   // --- TABLE ---

@@ -71,7 +71,11 @@ const App = () => {
             {/* PROTECTED ROUTES */}
             <Route
               path="/"
-              element={<Home />}
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
             />
 
             <Route
