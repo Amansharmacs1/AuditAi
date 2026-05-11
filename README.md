@@ -47,7 +47,6 @@ The main goal of AuditAI is to help teams save money on AI infrastructure withou
 
 ### Frontend Setup
 
-
 cd frontend
 npm install
 npm run dev
@@ -130,29 +129,6 @@ The AI-generated summary is handled separately from the actual savings calculati
 
 ---
 
-## Suggested Folder Structure
-
-
-AuditAI/
-│
-├── frontend/
-│   ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── context/
-│   └── utils/
-│
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
-│   ├── services/
-│   └── utils/
-│
-└── README.md
-
----
 
 ## Future Improvements
 
