@@ -42,6 +42,9 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
   `;
 
   const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
@@ -49,19 +52,19 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
     },
   });
 
-  try {
-    const info = await transporter.sendMail({
-      from: `"AuditAI" <${process.env.EMAIL_USER}>`,
-      to: toEmail,
-      subject: "Your SaaS Spend Audit Results",
-      html: emailHtml,
-    });
+  // non-blocking email sending
+  transporter.sendMail({
+    from: `"AuditAI" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: "Your SaaS Spend Audit Results",
+    html: emailHtml,
+  }).then(info => {
     console.log("📧 Email sent successfully:", info.messageId);
-    return info;
-  } catch (error) {
-    console.error("❌ Failed to send email:", error);
-    throw error;
-  }
+  }).catch(error => {
+    console.error("❌ Failed to send audit confirmation email:", error.message);
+  });
+
+  return { success: true, message: "Email triggered" };
 };
 
 module.exports = {
