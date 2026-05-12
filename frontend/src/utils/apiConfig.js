@@ -5,7 +5,10 @@
 
 // Determine the API base URL based on environment
 const getApiBaseUrl = () => {
-  // Always use the production backend URL
+  // Use localhost for local development, otherwise fallback to production URL
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:8080';
+  }
   return 'https://auditai-khcp.onrender.com';
 };
 
