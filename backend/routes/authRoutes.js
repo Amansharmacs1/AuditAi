@@ -62,11 +62,14 @@ router.post("/send-link", async (req, res) => {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // use TLS
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 5000,
+      socketTimeout: 15000,
     });
 
     // Verify connection configuration
@@ -78,8 +81,8 @@ router.post("/send-link", async (req, res) => {
       }
     });
 
-    // send mail (non-blocking)
-    transporter.sendMail({
+    // send mail (blocking to ensure delivery status)
+    await transporter.sendMail({
       from: `"AuditAI" <${process.env.EMAIL_USER}>`,
 
       to: email,
@@ -116,7 +119,7 @@ router.post("/send-link", async (req, res) => {
 
         </div>
       `,
-    }).catch(err => console.error("Send Link Email Error:", err.message));
+    });
 
     return res.json({
       success: true,
@@ -303,9 +306,10 @@ router.post("/forgot-password", async (req, res) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      connectionTimeout: 10000,
     });
 
-    transporter.sendMail({
+    await transporter.sendMail({
       from: `"AuditAI" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "AuditAI Password Reset",
@@ -332,7 +336,7 @@ router.post("/forgot-password", async (req, res) => {
           </p>
         </div>
       `,
-    }).catch(err => console.error("Forgot Password Email Error:", err.message));
+    });
 
     return res.json({
       success: true,

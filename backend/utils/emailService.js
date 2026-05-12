@@ -49,21 +49,22 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 10000,
   });
 
-  // non-blocking email sending
-  transporter.sendMail({
-    from: `"AuditAI" <${process.env.EMAIL_USER}>`,
-    to: toEmail,
-    subject: "Your SaaS Spend Audit Results",
-    html: emailHtml,
-  }).then(info => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"AuditAI" <${process.env.EMAIL_USER}>`,
+      to: toEmail,
+      subject: "Your SaaS Spend Audit Results",
+      html: emailHtml,
+    });
     console.log("📧 Email sent successfully:", info.messageId);
-  }).catch(error => {
+    return info;
+  } catch (error) {
     console.error("❌ Failed to send audit confirmation email:", error.message);
-  });
-
-  return { success: true, message: "Email triggered" };
+    throw error;
+  }
 };
 
 module.exports = {
