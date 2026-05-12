@@ -66,16 +66,26 @@ router.post("/send-link", async (req, res) => {
       });
     });
 
+    // Manual DNS lookup to force IPv4
+    const resolvedIp = await new Promise((resolve) => {
+      dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
+        resolve(address || '74.125.142.108'); // Fallback to a known Gmail SMTP IP
+      });
+    });
+
     // nodemailer config
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: resolvedIp,
       port: 587,
-      secure: false, // Use STARTTLS
+      secure: false,
+      servername: 'smtp.gmail.com',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      family: 4, // Force IPv4
+      tls: {
+        rejectUnauthorized: false
+      },
       connectionTimeout: 10000,
     });
 
@@ -273,15 +283,22 @@ router.post("/forgot-password", async (req, res) => {
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
+    // Manual DNS lookup
+    const resolvedIp = await new Promise((resolve) => {
+      dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
+        resolve(address || '74.125.142.108');
+      });
+    });
+
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: resolvedIp,
       port: 587,
       secure: false,
+      servername: 'smtp.gmail.com',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      family: 4,
     });
 
     await transporter.sendMail({

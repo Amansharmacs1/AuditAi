@@ -36,15 +36,25 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
     </div>
   `;
 
+  const dns = require('node:dns');
+  const resolvedIp = await new Promise((resolve) => {
+    dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
+      resolve(address || '74.125.142.108');
+    });
+  });
+
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: resolvedIp,
     port: 587,
     secure: false,
+    servername: 'smtp.gmail.com',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    family: 4,
+    tls: {
+      rejectUnauthorized: false
+    },
     connectionTimeout: 10000,
   });
 
