@@ -50,6 +50,9 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
       pass: process.env.EMAIL_PASS,
     },
     family: 4,
+    tls: {
+      rejectUnauthorized: false
+    },
     connectionTimeout: 10000,
   });
 

@@ -67,7 +67,10 @@ router.post("/send-link", async (req, res) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      family: 4, // FORCE IPv4
+      family: 4,
+      tls: {
+        rejectUnauthorized: false
+      },
       connectionTimeout: 10000,
       greetingTimeout: 5000,
       socketTimeout: 15000,
@@ -308,6 +311,9 @@ router.post("/forgot-password", async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
       family: 4,
+      tls: {
+        rejectUnauthorized: false
+      },
       connectionTimeout: 10000,
     });
 
