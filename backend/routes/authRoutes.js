@@ -61,13 +61,21 @@ router.post("/send-link", async (req, res) => {
     // nodemailer config
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      service: "gmail",
+      port: 587,
+      secure: false, // use TLS
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+    });
+
+    // Verify connection configuration
+    transporter.verify(function (error, success) {
+      if (error) {
+        console.error("❌ SMTP Verification Error:", error.message);
+      } else {
+        console.log("✅ SMTP Server is ready to take our messages");
+      }
     });
 
     // send mail (non-blocking)
@@ -289,9 +297,8 @@ router.post("/forgot-password", async (req, res) => {
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      service: "gmail",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
