@@ -1,4 +1,5 @@
 const Lead = require("../models/Lead");
+const Audit = require("../models/Audit");
 const { runAuditEngine } = require("../utils/auditEngine");
 const { sendAuditConfirmationEmail } = require("../utils/emailService");
 
@@ -95,6 +96,17 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
     });
 
     await newLead.save();
+
+    // 5.5 Save Audit for history
+    const newAudit = new Audit({
+      userEmail,
+      tools: enrichedTools,
+      summary: aiSummary,
+      recommendations,
+      totalSavings,
+    });
+    
+    await newAudit.save();
 
     // 6. Send Email Notification
     const publicShareUrl = `http://localhost:5173/share/${publicShareId}`; // Assumes vite frontend

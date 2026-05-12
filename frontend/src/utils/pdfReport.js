@@ -3,19 +3,44 @@ import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 
 const addHeader = (doc, title, subtitle) => {
-  doc.setFontSize(18);
-  doc.setTextColor(11, 60, 93);
-  doc.text(title, 14, 18);
+  // Top decorative bar
+  doc.setFillColor(11, 60, 93);
+  doc.rect(0, 0, 210, 6, "F");
 
+  // Company Name
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(24);
+  doc.setTextColor(11, 60, 93);
+  doc.text("AuditAI", 14, 20);
+
+  // Vertical Divider
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.5);
+  doc.line(48, 12, 48, 22);
+
+  // Report Title
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(16);
+  doc.setTextColor(80, 80, 80);
+  doc.text(title, 52, 20);
+
+  // Right-aligned subtitle (Date)
   doc.setFontSize(10);
-  doc.setTextColor(90, 90, 90);
-  doc.text(subtitle, 14, 24);
+  doc.setTextColor(120, 120, 120);
+  doc.text(subtitle, 196, 16, { align: "right" });
 
+  // Right-aligned contact info
   doc.setTextColor(11, 60, 93);
-  doc.text("Contact: amansharmacs11@gmail.com", 140, 24);
+  doc.setFont("helvetica", "bold");
+  doc.text("amansharmacs11@gmail.com", 196, 21, { align: "right" });
 
-  doc.setDrawColor(220, 220, 220);
+  // Thick bottom border
+  doc.setDrawColor(11, 60, 93);
+  doc.setLineWidth(1.2);
   doc.line(14, 28, 196, 28);
+  
+  // Reset font
+  doc.setFont("helvetica", "normal");
 };
 
 const addSectionTitle = (doc, y, text) => {
@@ -185,8 +210,8 @@ export const downloadSingleAuditPdf = async ({
 
   addHeader(
     doc,
-    "AuditAI - Audit Report",
-    `Generated on ${new Date().toLocaleString()}`
+    "SaaS Optimization Report",
+    `Generated: ${new Date().toLocaleDateString()}`
   );
 
   doc.setFontSize(11);
@@ -287,8 +312,8 @@ export const downloadHistoryPdf = (audits = []) => {
 
   addHeader(
     doc,
-    "AuditAI - Audit History Report",
-    `Generated on ${generatedAt}`
+    "SaaS Audit History",
+    `Generated: ${new Date().toLocaleDateString()}`
   );
 
   const tableRows = audits.map((audit, index) => {

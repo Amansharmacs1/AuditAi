@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Modal, Button, Form as BootstrapForm, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { getSessionEmail } from "../utils/authSession";
 
 const LeadCaptureModal = ({ show, onHide, toolsData }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
-    userEmail: "",
+    userEmail: getSessionEmail() || "",
     companyName: "",
     role: "",
     teamSize: "",
