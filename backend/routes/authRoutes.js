@@ -56,8 +56,8 @@ router.post("/send-link", async (req, res) => {
     );
 
     // verification link
-    const verifyLink =
-  `http://localhost:5173/verify/${token}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const verifyLink = `${frontendUrl}/verify/${token}`;
     // nodemailer config
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -115,11 +115,11 @@ router.post("/send-link", async (req, res) => {
 
   } catch (err) {
 
-    console.log(err);
+    console.error("Send Link Error:", err.message);
 
     return res.status(500).json({
       success: false,
-      error: err.message,
+      message: "Unable to send verification email. Please check backend logs.",
     });
 
   }
@@ -282,7 +282,8 @@ router.post("/forgot-password", async (req, res) => {
     }
 
     const resetToken = createResetToken(email);
-    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",

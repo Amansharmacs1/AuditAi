@@ -109,7 +109,8 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
     await newAudit.save();
 
     // 6. Send Email Notification
-    const publicShareUrl = `http://localhost:5173/share/${publicShareId}`; // Assumes vite frontend
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const publicShareUrl = `${frontendUrl}/share/${publicShareId}`;
     
     // We don't await email so it doesn't block the frontend response
     sendAuditConfirmationEmail(userEmail, fullName, totalSavings, publicShareUrl)
