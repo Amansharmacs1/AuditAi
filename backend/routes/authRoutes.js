@@ -66,13 +66,6 @@ router.post("/send-link", async (req, res) => {
       });
     });
 
-    // Manual DNS lookup to force IPv4
-    const resolvedIp = await new Promise((resolve) => {
-      dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
-        resolve(address || '74.125.142.108'); // Fallback to a known Gmail SMTP IP
-      });
-    });
-
     // nodemailer config
     const transporter = nodemailer.createTransport({
       host: resolvedIp,
