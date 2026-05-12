@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { endpoints } from "../utils/apiConfig";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -36,7 +37,7 @@ const ResetPassword = () => {
       setError("");
 
       const res = await fetch(
-        "http://localhost:8080/api/auth/reset-password",
+        endpoints.resetPassword(),
         {
           method: "POST",
           headers: {

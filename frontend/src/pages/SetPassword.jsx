@@ -4,6 +4,7 @@ import {
   clearSessionAuth,
   getSessionToken,
 } from "../utils/authSession";
+import { endpoints } from "../utils/apiConfig";
 
 const SetPassword = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const SetPassword = () => {
       setMessage("");
 
       const res = await fetch(
-        "http://localhost:8080/api/auth/set-password",
+        endpoints.setPassword(),
         {
           method: "POST",
           headers: {

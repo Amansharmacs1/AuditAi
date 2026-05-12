@@ -10,6 +10,7 @@ import {
   downloadHistoryPdf,
   downloadSingleAuditPdf,
 } from "../utils/pdfReport";
+import { endpoints } from "../utils/apiConfig";
 
 const History = () => {
 
@@ -39,7 +40,7 @@ const History = () => {
       }
 
       const res = await fetch(
-        `http://localhost:8080/api/audit/history/${email}`,
+        endpoints.getAuditHistory(email),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +81,7 @@ const History = () => {
       setError("");
 
       const res = await fetch(
-        `http://localhost:8080/api/audit/${auditId}`,
+        endpoints.deleteAudit(auditId),
         {
           method: "DELETE",
           headers: {

@@ -4,6 +4,7 @@ import {
   isSessionAuthenticated,
   setSessionAuth,
 } from "../utils/authSession";
+import { endpoints } from "../utils/apiConfig";
 
 const Login = () => {
 
@@ -24,7 +25,7 @@ const Login = () => {
       setMessage("");
 
       const res = await fetch(
-        "http://localhost:8080/api/auth/send-link",
+        endpoints.sendLink(),
         {
           method: "POST",
 
@@ -66,7 +67,7 @@ const Login = () => {
       setMessage("");
 
       const res = await fetch(
-        "http://localhost:8080/api/auth/login-password",
+        endpoints.loginPassword(),
         {
           method: "POST",
           headers: {

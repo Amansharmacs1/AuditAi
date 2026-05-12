@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { endpoints } from "../utils/apiConfig";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ const ForgotPassword = () => {
       setError("");
 
       const res = await fetch(
-        "http://localhost:8080/api/auth/forgot-password",
+        endpoints.forgotPassword(),
         {
           method: "POST",
           headers: {

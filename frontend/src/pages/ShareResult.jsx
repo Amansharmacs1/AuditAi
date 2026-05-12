@@ -9,6 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { endpoints } from "../utils/apiConfig";
 
 const COLORS = ["#4DA8DA", "#2E8BC0", "#145DA0", "#0B3C5D", "#1B4965"];
 
@@ -28,7 +29,7 @@ const ShareResult = () => {
   useEffect(() => {
     const fetchSharedAudit = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/leads/share/${shareId}`);
+        const res = await fetch(endpoints.getSharedAudit(shareId));
         const json = await res.json();
 
         if (!res.ok) {

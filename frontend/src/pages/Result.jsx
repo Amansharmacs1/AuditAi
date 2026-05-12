@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { getSessionToken } from "../utils/authSession";
 import { downloadSingleAuditPdf } from "../utils/pdfReport";
+import { endpoints } from "../utils/apiConfig";
 
 const COLORS = ["#4DA8DA", "#2E8BC0", "#145DA0", "#0B3C5D", "#1B4965"];
 
@@ -56,7 +57,7 @@ const Result = () => {
         }
 
         const res = await fetch(
-          "http://localhost:8080/api/ai/latest",
+          endpoints.getLatestAudit(),
           {
             headers: {
               Authorization: `Bearer ${token}`,

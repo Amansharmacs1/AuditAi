@@ -5,6 +5,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { setSessionAuth } from "../utils/authSession";
+import { endpoints } from "../utils/apiConfig";
 
 const Verify = () => {
 
@@ -21,7 +22,7 @@ const Verify = () => {
         if (!token) return;
 
         const res = await fetch(
-          "http://localhost:8080/api/auth/verify",
+          endpoints.verify(),
           {
             method: "POST",
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, Form as BootstrapForm, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { getSessionEmail } from "../utils/authSession";
+import { endpoints } from "../utils/apiConfig";
 
 const LeadCaptureModal = ({ show, onHide, toolsData }) => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const LeadCaptureModal = ({ show, onHide, toolsData }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/leads/create", {
+      const response = await fetch(endpoints.createLead(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
