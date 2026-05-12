@@ -13,10 +13,9 @@ const safeFrontendOrigin = (() => {
     if (!process.env.FRONTEND_URL) return null;
     return new URL(process.env.FRONTEND_URL).origin;
   } catch (err) {
-<<<<<<< HEAD
+
     console.warn('Invalid FRONTEND_URL:', process.env.FRONTEND_URL);
-=======
->>>>>>> cfe965f (setup-project)
+
     return null;
   }
 })();
@@ -24,11 +23,7 @@ const safeFrontendOrigin = (() => {
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-<<<<<<< HEAD
-  'http://localhost:5174', // Added common alternative vite port
-=======
-  'http://localhost:5174',
->>>>>>> cfe965f (setup-project)
+
   safeFrontendOrigin,
 ].filter(Boolean);
 
