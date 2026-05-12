@@ -9,11 +9,6 @@ const nodemailer = require("nodemailer");
  * @param {string} publicShareUrl - The public link to view their audit
  */
 const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publicShareUrl) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn("⚠️ EMAIL_USER or EMAIL_PASS is not defined. Skipping email send.");
-    return;
-  }
-
   const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
       <h2 style="color: #0B3C5D;">AuditAI Complete: Here are your results!</h2>
@@ -41,25 +36,15 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
     </div>
   `;
 
-  const dns = require('node:dns');
-  const resolvedIp = await new Promise((resolve) => {
-    dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
-      resolve(address || '74.125.142.108');
-    });
-  });
-
   const transporter = nodemailer.createTransport({
-    host: resolvedIp,
-    port: 465,
-    secure: true,
-    servername: 'smtp.gmail.com',
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      rejectUnauthorized: false
-    },
+    family: 4,
     connectionTimeout: 10000,
   });
 

@@ -68,65 +68,30 @@ router.post("/send-link", async (req, res) => {
 
     // nodemailer config
     const transporter = nodemailer.createTransport({
-      host: resolvedIp,
-      port: 465,
-      secure: true,
-      servername: 'smtp.gmail.com', // Required because we are using an IP
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // Use STARTTLS
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        rejectUnauthorized: false
-      },
+      family: 4, // Force IPv4
       connectionTimeout: 10000,
     });
 
-    // Verify connection configuration
-    transporter.verify(function (error, success) {
-      if (error) {
-        console.error("❌ SMTP Verification Error:", error.message);
-      } else {
-        console.log("✅ SMTP Server is ready to take our messages");
-      }
-    });
-
-    // send mail (blocking to ensure delivery status)
+    // send mail
     await transporter.sendMail({
       from: `"AuditAI" <${process.env.EMAIL_USER}>`,
-
       to: email,
-
       subject: "AuditAI Login Verification",
-
       html: `
         <div style="font-family:sans-serif">
-
           <h2>Welcome to AuditAI 🚀</h2>
-
-          <p>
-            Click the button below to login.
-          </p>
-
-          <a
-            href="${verifyLink}"
-            style="
-              background:#145DA0;
-              color:white;
-              padding:12px 20px;
-              text-decoration:none;
-              border-radius:6px;
-              display:inline-block;
-              margin-top:10px;
-            "
-          >
+          <p>Click the button below to login.</p>
+          <a href="${verifyLink}" style="background:#145DA0;color:white;padding:12px 20px;text-decoration:none;border-radius:6px;display:inline-block;margin-top:10px;">
             Verify & Login
           </a>
-
-          <p style="margin-top:20px">
-            This link expires in 10 minutes.
-          </p>
-
+          <p style="margin-top:20px">This link expires in 10 minutes.</p>
         </div>
       `,
     });
@@ -310,17 +275,13 @@ router.post("/forgot-password", async (req, res) => {
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
       family: 4,
-      tls: {
-        rejectUnauthorized: false
-      },
-      connectionTimeout: 10000,
     });
 
     await transporter.sendMail({
@@ -331,23 +292,10 @@ router.post("/forgot-password", async (req, res) => {
         <div style="font-family:sans-serif">
           <h2>Reset your AuditAI password</h2>
           <p>Click the button below to set a new password.</p>
-          <a
-            href="${resetLink}"
-            style="
-              background:#145DA0;
-              color:white;
-              padding:12px 20px;
-              text-decoration:none;
-              border-radius:6px;
-              display:inline-block;
-              margin-top:10px;
-            "
-          >
+          <a href="${resetLink}" style="background:#145DA0;color:white;padding:12px 20px;text-decoration:none;border-radius:6px;display:inline-block;margin-top:10px;">
             Reset Password
           </a>
-          <p style="margin-top:20px">
-            This link expires in 10 minutes.
-          </p>
+          <p style="margin-top:20px">This link expires in 10 minutes.</p>
         </div>
       `,
     });
