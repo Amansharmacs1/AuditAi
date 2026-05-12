@@ -56,9 +56,7 @@ router.post("/send-link", async (req, res) => {
     );
 
     // verification link
-    const frontendUrl = process.env.FRONTEND_URL
-      ? process.env.FRONTEND_URL.replace(/\/$/, "")
-      : 'http://localhost:5173';
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const verifyLink = `${frontendUrl}/verify/${token}`;
     // nodemailer config
     const transporter = nodemailer.createTransport({
@@ -284,7 +282,7 @@ router.post("/forgot-password", async (req, res) => {
     }
 
     const resetToken = createResetToken(email);
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
     const transporter = nodemailer.createTransport({

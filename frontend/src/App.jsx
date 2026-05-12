@@ -43,17 +43,8 @@ const App = () => {
             />
 
             <Route
-  path="/verify/:token"
-  element={<Verify />}
-/>
-
-            <Route
-              path="/set-password"
-              element={
-                <ProtectedRoute>
-                  <SetPassword />
-                </ProtectedRoute>
-              }
+              path="/verify/:token"
+              element={<Verify />}
             />
 
             <Route
@@ -66,7 +57,10 @@ const App = () => {
               element={<ResetPassword />}
             />
 
-
+            <Route
+              path="/share/:shareId"
+              element={<ShareResult />}
+            />
 
             {/* PROTECTED ROUTES */}
             <Route
@@ -79,15 +73,19 @@ const App = () => {
             />
 
             <Route
-              path="/share/:shareId"
-              element={<ShareResult />}
-            />
-
-            <Route
               path="/about"
               element={
                 <ProtectedRoute>
                   <About />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/set-password"
+              element={
+                <ProtectedRoute>
+                  <SetPassword />
                 </ProtectedRoute>
               }
             />
@@ -101,14 +99,14 @@ const App = () => {
               }
             />
 
-              <Route
-  path="/history"
-  element={
-    <ProtectedRoute>
-      <History />
-    </ProtectedRoute>
-  }
-/>
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute>
+                  <History />
+                </ProtectedRoute>
+              }
+            />
 <Route path="*" element={<NotFound />} />
 
           </Routes>

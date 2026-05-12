@@ -60,7 +60,7 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
 
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -109,7 +109,7 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
     await newAudit.save();
 
     // 6. Send Email Notification
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const publicShareUrl = `${frontendUrl}/share/${publicShareId}`;
     
     // We don't await email so it doesn't block the frontend response

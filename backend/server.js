@@ -8,8 +8,6 @@ const auditRoutes = require("./routes/auditRoutes");
 const app = express();
 
 // middleware
-<<<<<<< HEAD
-=======
 const safeFrontendOrigin = (() => {
   try {
     if (!process.env.FRONTEND_URL) return null;
@@ -23,23 +21,24 @@ const safeFrontendOrigin = (() => {
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'http://localhost:5174', // Added common alternative vite port
   safeFrontendOrigin,
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
+    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked for origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ["GET", "POST", "DELETE"],
+  methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
   credentials: true
 }));
->>>>>>> 60496e6 (project updates)
 
-app.use(cors());
 app.use(express.json());
 
 // connect DB

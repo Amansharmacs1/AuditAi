@@ -50,9 +50,19 @@ const Navbar = () => {
         </NavLink>
 
         <div className="d-flex align-items-center gap-3">
-
-          {token && (
+          {token ? (
             <>
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? "nav-link text-info"
+                    : "nav-link text-light"
+                }
+              >
+                Home
+              </NavLink>
+
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
@@ -78,13 +88,19 @@ const Navbar = () => {
               {/* LOGOUT */}
               <button
                 onClick={handleLogout}
-                className="btn btn-sm btn-light"
+                className="btn btn-sm btn-light ms-2"
               >
                 Logout
               </button>
             </>
+          ) : (
+            <NavLink
+              to="/login"
+              className="btn btn-sm btn-outline-light ms-2"
+            >
+              Login
+            </NavLink>
           )}
-
         </div>
 
       </div>
