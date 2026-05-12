@@ -8,6 +8,36 @@ const auditRoutes = require("./routes/auditRoutes");
 const app = express();
 
 // middleware
+<<<<<<< HEAD
+=======
+const safeFrontendOrigin = (() => {
+  try {
+    if (!process.env.FRONTEND_URL) return null;
+    return new URL(process.env.FRONTEND_URL).origin;
+  } catch (err) {
+    console.warn('Invalid FRONTEND_URL:', process.env.FRONTEND_URL);
+    return null;
+  }
+})();
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  safeFrontendOrigin,
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ["GET", "POST", "DELETE"],
+  credentials: true
+}));
+>>>>>>> 60496e6 (project updates)
 
 app.use(cors());
 app.use(express.json());

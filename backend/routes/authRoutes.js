@@ -56,7 +56,9 @@ router.post("/send-link", async (req, res) => {
     );
 
     // verification link
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = process.env.FRONTEND_URL
+      ? process.env.FRONTEND_URL.replace(/\/$/, "")
+      : 'http://localhost:5173';
     const verifyLink = `${frontendUrl}/verify/${token}`;
     // nodemailer config
     const transporter = nodemailer.createTransport({
