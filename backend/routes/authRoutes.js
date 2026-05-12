@@ -136,7 +136,7 @@ router.post("/send-link", async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Unable to send verification email. Please check backend logs.",
+      message: `Email Error: ${err.message}`,
     });
 
   }
