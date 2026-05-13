@@ -1,81 +1,280 @@
-# AuditAI 🚀
+# AuditAI
 
- **Stop overpaying for your AI stack.** AuditAI helps startups and small teams analyze their subscription spend and reclaim their budget.
+AuditAI is an AI-powered SaaS cost optimization platform designed to help startups, students, and growing teams understand how much they’re spending on AI tools and where they can reduce unnecessary costs more efficiently.
 
-AuditAI is a spend optimization platform designed to shine a light on the "shadow stack" of AI tools. By auditing subscriptions like **ChatGPT, Claude, Gemini, Cursor, and GitHub Copilot**, we identify redundancies and generate actionable, AI-powered recommendations to keep your team productive without the waste[cite: 1, 2].
+The platform analyzes subscriptions like OpenAI ChatGPT, Anthropic Claude, Google Gemini, Cursor, and GitHub Copilot to generate practical optimization suggestions using AI-generated insights.
 
-Designed as a lead-generation tool, AuditAI bridges the gap between high-performance AI infrastructure and cost-efficiency.
-
----
-
-## ✨ Key Features
-
-### 🔍 Intelligence & Auditing
-* **Spend Audit Engine:** Deep analysis of per-tool costs vs. team utility.
-* **AI-Generated Summaries:** Personalized insights powered by Gemini for a human-readable breakdown of your spend.
-* **Savings Recommendations:** Specific, tool-by-tool suggestions on where to consolidate.
-
-### 🛡️ Security & Experience
-* **Lead Capture & Privacy:** Purpose-built for growth while ensuring public result pages are stripped of identifying user data[cite: 1, 2].
-* **Auth & Protected Routes:** Secure access for your team's audit history.
-* **PDF Export:** Professional reports ready for stakeholders.
-
-### 🌐 Sharing & Scalability
-* **Public Sharing:** Unique, shareable URLs for audit results.
-* **Responsive UI:** A modern, clean interface built for speed and clarity[cite: 2].
-* **Audit History:** Track your optimization journey over time[cite: 2].
+Built as part of the Credex Web Development Assignment 2026, the project focuses on solving real-world SaaS spending problems while delivering a clean and modern full-stack experience.
 
 ---
 
-## 🛠️ The Tech Stack
+# Live Demo
 
-AuditAI is built with a modern, high-performance stack for scalability and developer productivity[cite: 2].
-
-| Layer | Technology |
-| :--- | :--- |
-| **Frontend** | React, Vite, Tailwind CSS, React Router[cite: 2] |
-| **Backend** | Node.js, Express.js[cite: 2] |
-| **Database** | MongoDB, Mongoose[cite: 2] |
-| **APIs** | Google Gemini (AI Engine), Resend (Email Infrastructure)[cite: 2] |
+* Frontend: https://audit-ai-nu.vercel.app
+* Backend API: https://auditai-1.onrender.com
+* Repository: https://github.com/Amansharmacs1/AuditAi
 
 ---
 
-# 🚀 Getting Started
+# Features
 
-### 📦 1. Clone & Setup
-* Run `git clone https://github.com/Amansharmacs1/AuditAi.git` to copy the repository.
-* Use `cd AuditAI` to enter the project directory[cite: 2].
+## AI Spend Audit Engine
 
-### 💻 2. Frontend Installation[cite: 2]
-* Navigate to the frontend directory: `cd frontend`[cite: 2].
-* Install dependencies: `npm install`[cite: 2].
-* Start the development server: `npm run dev`[cite: 2].
+* Analyze spending across multiple AI tools
+* Dynamic tool entry system
+* Monthly and yearly spend calculations
+* Smart optimization suggestions
+* AI-generated cost analysis summaries
 
-### ⚙️ 3. Backend Installation[cite: 2]
-* Navigate to the backend directory: `cd backend`[cite: 2].
-* Install dependencies: `npm install`[cite: 2].
-* Start the backend server: `npm run dev`[cite: 2].
+## AI-Powered Recommendations
+
+* Executive-style summaries
+* Budget optimization advice
+* Alternative lower-cost tool suggestions
+* Structured and readable insights
+* Business-focused recommendations
+
+## Authentication System
+
+* Secure email-based authentication
+* Protected routes
+* Persistent login sessions
+* User-specific audit history
+
+## Public Shareable Reports
+
+* Unique public audit URLs
+* Share-ready optimization reports
+* Sensitive information hidden from public pages
+* Public viewing support for results
+
+## Lead Capture System
+
+* Email collection before viewing results
+* Optional business details:
+  * Company name
+  * Role
+  * Team size
+* Backend lead storage
+* Transactional email support
+
+## Modern Frontend Experience
+
+* Responsive UI design
+* Smooth navigation flow
+* Interactive landing page
+* Loading states and animations
+* Improved user experience
+
+## Audit History
+
+* Saved audit records
+* Persistent history dashboard
+* Individual audit result pages
 
 ---
 
-# ⚙️ Environment Variables[cite: 2]
+# Tech Stack
 
-* Create a `.env` file in the `backend/` directory[cite: 2].
-* `PORT=8080` — The port for your local server[cite: 2].
-* `MONGO_URI=your_mongodb_uri` — Your MongoDB connection string[cite: 2].
-* `GEMINI_API_KEY=your_gemini_api_key` — Your Google AI API key[cite: 2].
-* `JWT_SECRET=your_secret` — The secret key for authentication[cite: 2].
-* `RESEND_API_KEY=your_resend_key` — Your key for email services[cite: 2].
+## Frontend
+
+* React
+* Vite
+* React Router DOM
+* Tailwind CSS
+
+## Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+
+## APIs & Services
+
+* Gemini API
+* Resend Email API
+
+## Deployment
+
+* Vercel (Frontend)
+* Render (Backend)
 
 ---
 
-# 🏗️ Decisions & Trade-offs[cite: 2]
+# Folder Structure
 
-* **Why Gemini?** We prioritized the Gemini API for its seamless integration and high performance during the development lifecycle[cite: 2].
-* **Why MongoDB?** The flexible schema of MongoDB was essential for handling dynamic audit data that varies by team size and toolset[cite: 2].
-* **Vite vs. Create-React-App:** We used Vite for near-instant hot module replacement (HMR) and a significantly faster build pipeline[cite: 2].
-* **Reliability Over Pure AI:** Audit calculations use rule-based logic for financial accuracy, while Gemini is reserved for humanizing the summary. This ensures the numbers are always correct[cite: 1, 2].
+
+AuditAI/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   └── server.js
+│
+├── README.md
+├── ARCHITECTURE.md
+├── DEVLOG.md
+├── REFLECTION.md
+├── TESTS.md
+├── PRICING_DATA.md
+├── PROMPTS.md
+├── GTM.md
+├── ECONOMICS.md
+├── USER_INTERVIEWS.md
+├── LANDING_COPY.md
+├── METRICS.md
+└── .env.example
+
 
 ---
 
-### # Developed with ❤️ by the AuditAI Team.[cite: 2]
+# Installation & Setup
+
+## Clone the Repository
+
+
+git clone https://github.com/Amansharmacs1/AuditAi.git
+
+cd AuditAi
+
+
+## Backend Setup
+
+cd backend
+npm install
+
+Run the backend server:
+
+npm run dev
+
+
+## Frontend Setup
+
+cd frontend
+npm install
+npm run dev
+
+
+---
+
+# Core Workflow
+
+1. User enters AI tools, plans, seat counts, and monthly costs
+2. Platform calculates current AI spending
+3. Backend sends audit data to Gemini API
+4. AI generates optimization recommendations
+5. Audit results are stored in MongoDB
+6. A public shareable report link is generated
+7. Lead details are captured for follow-up
+
+---
+
+# Shareable Audit Links
+
+Every completed audit generates a unique public URL.
+
+The public report:
+
+* Hides sensitive user information
+* Displays savings analysis clearly
+* Supports public sharing
+* Generates cleaner previews for links
+
+---
+
+# Abuse Protection
+
+Basic abuse prevention includes:
+
+* Backend validation
+* Rate limiting logic
+* Honeypot field checks
+
+This helps reduce spam requests and unnecessary API usage while keeping the experience smooth for genuine users.
+
+---
+
+# Pricing Logic
+
+The platform calculates:
+
+* Total monthly spend
+* Total annual spend
+* Estimated monthly savings
+* Estimated yearly savings
+
+Recommendations are generated using:
+
+* Seat optimization
+* Plan downgrade suggestions
+* Alternative tool recommendations
+* Duplicate subscription detection
+
+---
+
+# Deployment
+
+## Frontend
+
+Deployed using Vercel
+
+## Backend
+
+Deployed using Render
+
+---
+
+# Key Product Decisions
+
+## Why MERN Stack?
+
+The MERN stack made it easier to build and deploy a complete full-stack JavaScript application quickly while keeping development flexible and scalable.
+
+## Why Gemini API?
+
+Gemini offered fast AI responses, flexible recommendation generation, and a solid free-tier experience during development.
+
+## Why Public Audit Links?
+
+Public reports improve product sharing and create a natural growth loop through link sharing.
+
+## Why Lead Capture Before Results?
+
+Capturing leads before showing results helps track conversions and identify users with high optimization potential.
+
+---
+
+# Challenges Faced
+
+* Handling inconsistent AI-generated responses
+* Managing protected routes and authentication
+* Debugging MongoDB connection issues
+* Creating realistic savings calculations
+* Structuring AI outputs into readable UI sections
+
+---
+
+# Future Improvements
+
+* Team dashboards
+* Advanced analytics
+* Stripe billing integration
+* Better pricing intelligence
+* Real-time SaaS spend tracking
+* Vendor comparison engine
+* Support for more AI providers
+
+---
+
+# Author
+
+Aman Sharma
+Built for the Credex Web Development Assignment 2026.
