@@ -112,9 +112,12 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const publicShareUrl = `${frontendUrl}/share/${publicShareId}`;
     
-    // We don't await email so it doesn't block the frontend response
-    sendAuditConfirmationEmail(userEmail, fullName, totalSavings, publicShareUrl)
-      .catch((err) => console.error("Email send background task failed:", err));
+    try {
+      await sendAuditConfirmationEmail(userEmail, fullName, totalSavings, publicShareUrl);
+    } catch (err) {
+      console.error("Email send failed during lead creation:", err);
+      // We don't fail the whole request if email fails, but we log it clearly.
+    }
 
     return res.status(201).json({
       success: true,

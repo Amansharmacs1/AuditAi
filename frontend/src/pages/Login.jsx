@@ -1,23 +1,20 @@
 import React, { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import {
   isSessionAuthenticated,
-  setSessionAuth,
 } from "../utils/authSession";
 import { endpoints } from "../utils/apiConfig";
 
 const Login = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handlePasswordLogin = async (e) => {
+  const handleSendLink = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Email and password are both required.");
+    if (!email) {
+      setError("Please enter your email address.");
       return;
     }
 
@@ -26,29 +23,24 @@ const Login = () => {
       setError("");
       setMessage("");
 
-      const res = await fetch(endpoints.loginPassword(), {
+      const res = await fetch(endpoints.sendLink(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError(data.message || "Login failed. Please check your email and password.");
+        setError(data.message || "Could not send verification link");
         return;
       }
 
-      setSessionAuth({
-        token: data.token,
-        email: data.email,
-        expiresAt: data.expiresAt,
-      });
-      navigate("/");
+      setMessage(data.message);
     } catch (err) {
-      setError("Unable to connect to the server. Please try again.");
+      setError("Unable to send link right now. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,12 +65,10 @@ const Login = () => {
              <span className="fs-1">🚀</span>
           </div>
           <h2 className="fw-bold text-dark">Welcome to AuditAI</h2>
-          <p className="text-muted">
-            Enter your email and password to login. New accounts are created with the password you provide.
-          </p>
+          <p className="text-muted">Enter your email to receive a magic login link.</p>
         </div>
 
-        <form onSubmit={handlePasswordLogin}>
+        <form onSubmit={handleSendLink}>
           <div className="mb-4">
             <label className="form-label fw-semibold text-muted small text-uppercase">Email Address</label>
             <input
@@ -87,19 +77,6 @@ const Login = () => {
               placeholder="name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ borderRadius: "12px" }}
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="form-label fw-semibold text-muted small text-uppercase">Password</label>
-            <input
-              type="password"
-              className="form-control form-control-lg bg-light border-0"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
               style={{ borderRadius: "12px" }}
             />
@@ -114,13 +91,13 @@ const Login = () => {
             {loading ? (
               <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             ) : null}
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Sending Link..." : "Send Magic Link"}
           </button>
         </form>
 
         <div className="text-center">
           <p className="text-muted small">
-            Use the same email and password to login next time.
+            No password required. We'll send a secure link to your inbox.
           </p>
         </div>
 

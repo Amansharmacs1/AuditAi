@@ -14,7 +14,7 @@ const createSessionToken = (email) =>
     { expiresIn: "5m" }
   );
 
-// SEND LOGIN LINK (Restored Verification Flow)
+// SEND LOGIN LINK (Verification Flow)
 router.post("/send-link", async (req, res) => {
   try {
     const { email } = req.body;
@@ -60,55 +60,6 @@ router.post("/send-link", async (req, res) => {
   }
 });
 
-// PASSWORD LOGIN / FIRST-TIME PASSWORD SET
-router.post("/login-password", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      const passwordHash = await bcrypt.hash(password, 10);
-      user = await User.create({ email, passwordHash });
-    } else if (user.passwordHash) {
-      const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-      if (!passwordMatch) {
-        return res.status(401).json({
-          success: false,
-          message: "Incorrect password. Please try again.",
-        });
-      }
-    } else {
-      const passwordHash = await bcrypt.hash(password, 10);
-      user.passwordHash = passwordHash;
-      await user.save();
-    }
-
-    const token = createSessionToken(email);
-    const expiresAt = Date.now() + 5 * 60 * 1000;
-
-    return res.json({
-      success: true,
-      email,
-      token,
-      expiresAt,
-    });
-  } catch (err) {
-    console.error("Password Login Error:", err.message);
-    return res.status(500).json({
-      success: false,
-      message: "Unable to login at this time",
-    });
-  }
-});
-
 // VERIFY LOGIN
 router.post("/verify", async (req, res) => {
   try {
@@ -139,7 +90,5 @@ router.post("/verify", async (req, res) => {
     });
   }
 });
-
-// REMOVED: Password Reset and Login Password routes as requested.
 
 module.exports = router;

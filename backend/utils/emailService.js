@@ -10,12 +10,19 @@ const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY;
  * Generic internal function to send email via EmailJS REST API.
  */
 const sendEmail = async ({ templateId, templateParams }) => {
+  // Debug logging for configuration
   if (!EMAILJS_SERVICE_ID || !EMAILJS_PUBLIC_KEY || !EMAILJS_PRIVATE_KEY) {
-    console.error("❌ EmailJS not configured: Missing Service ID, Public Key, or Private Key.");
+    console.error("❌ EmailJS Config Missing:", {
+      service: !!EMAILJS_SERVICE_ID,
+      public: !!EMAILJS_PUBLIC_KEY,
+      private: !!EMAILJS_PRIVATE_KEY
+    });
     throw new Error("Email service is currently unavailable.");
   }
 
   try {
+    console.log(`📧 Attempting to send email via EmailJS (Template: ${templateId})...`);
+    
     const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
       headers: {
@@ -30,16 +37,21 @@ const sendEmail = async ({ templateId, templateParams }) => {
       }),
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ EmailJS error:", errorText);
-      throw new Error(`Failed to send email: ${errorText}`);
+      console.error("❌ EmailJS API Error:", {
+        status: response.status,
+        text: responseText,
+        template: templateId
+      });
+      throw new Error(`EmailJS failed with status ${response.status}: ${responseText}`);
     }
 
-    console.log(`📧 Email sent via EmailJS (Template: ${templateId})`);
+    console.log(`✅ Email sent successfully via EmailJS! Response: ${responseText}`);
     return { success: true };
   } catch (err) {
-    console.error("❌ Email sending failed:", err.message);
+    console.error("❌ Email sending failed (Network/Other):", err.message);
     throw err;
   }
 };
