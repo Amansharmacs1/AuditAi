@@ -31,7 +31,7 @@ export const endpoints = {
   // Audit routes (for authenticated users)
   generateAudit: () => getEndpoint('/api/ai/generate'),
   getLatestAudit: () => getEndpoint('/api/ai/latest'),
-  getAuditHistory: (email) => getEndpoint(`/api/audit/history/${email}`),
+  getAuditHistory: (email) => getEndpoint(`/api/audit/history/${encodeURIComponent(email)}`),
   deleteAudit: (auditId) => getEndpoint(`/api/audit/${auditId}`),
 
   // Auth routes

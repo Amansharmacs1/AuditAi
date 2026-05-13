@@ -98,25 +98,30 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
     await newLead.save();
 
     // 5.5 Save Audit for history
-    const newAudit = new Audit({
-      userEmail,
-      tools: enrichedTools,
-      summary: aiSummary,
-      recommendations,
-      totalSavings,
-    });
-    
-    await newAudit.save();
+    try {
+      const newAudit = new Audit({
+        userEmail: userEmail.toLowerCase().trim(),
+        tools: enrichedTools,
+        summary: aiSummary,
+        recommendations: recommendations || [],
+        totalSavings: totalSavings || 0,
+      });
+      await newAudit.save();
+      console.log(`✅ Audit saved to history for ${userEmail}`);
+    } catch (auditErr) {
+      console.error("❌ Failed to save audit to history:", auditErr.message);
+      // We continue because the lead was already saved
+    }
 
     // 6. Send Email Notification
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const publicShareUrl = `${frontendUrl}/share/${publicShareId}`;
     
     try {
+      console.log(`📧 Sending audit result email to ${userEmail}...`);
       await sendAuditConfirmationEmail(userEmail, fullName, totalSavings, publicShareUrl);
     } catch (err) {
-      console.error("Email send failed during lead creation:", err);
-      // We don't fail the whole request if email fails, but we log it clearly.
+      console.error("❌ Email send failed during lead creation:", err.message);
     }
 
     return res.status(201).json({
@@ -126,7 +131,7 @@ Focus on the most impactful optimization. Maintain a professional, encouraging, 
     });
 
   } catch (error) {
-    console.error("Lead Create Error:", error);
+    console.error("❌ Lead Create Error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 };

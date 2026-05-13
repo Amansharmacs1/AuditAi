@@ -13,7 +13,6 @@ import {
 import { primaryUseCaseOptions } from "../utils/toolPlans";
 import LeadCaptureModal from "./LeadCaptureModal";
 
-const STORAGE_KEY = "auditai_spend_form_v1";
 
 const createEmptyTool = () => ({
   tool: "",
@@ -47,31 +46,6 @@ const Form = ({ initialValues = {} }) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const persisted = localStorage.getItem(STORAGE_KEY);
-    if (!persisted) return;
-
-    try {
-      const parsed = JSON.parse(persisted);
-      setFormState({
-        ...defaultFormState,
-        ...parsed,
-        tools:
-          parsed.tools?.length > 0
-            ? parsed.tools
-            : [createEmptyTool()],
-      });
-    } catch (err) {
-      // Ignore invalid stored payload safely.
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(formState)
-    );
-  }, [formState]);
 
   const validationResult = useMemo(() => {
     const nextErrors = {
@@ -229,7 +203,6 @@ const Form = ({ initialValues = {} }) => {
     setFormState(resetValue);
     setErrors({ globals: {}, tools: {} });
     setDidSubmit(false);
-    localStorage.removeItem(STORAGE_KEY);
   }, [initialValues]);
 
   // =========================
