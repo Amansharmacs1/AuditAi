@@ -37,26 +37,19 @@ const sendEmail = async ({ to, subject, html }) => {
   }
 
   // --- 2. FALLBACK TO NODEMAILER (SMTP) ---
-  // Manual DNS lookup to force IPv4 (Critical for Render's networking)
-  const resolvedIp = await new Promise((resolve) => {
-    dns.lookup("smtp.gmail.com", { family: 4 }, (err, address) => {
-      resolve(address || "74.125.142.108"); // Fallback to a known Gmail IP
-    });
-  });
-
   const transporter = nodemailer.createTransport({
-    host: resolvedIp,
-    port: 587,
-    secure: false, // STARTTLS
-    servername: "smtp.gmail.com", // Essential for SNI verification when using IP
+    host: "smtp.gmail.com",
+    port: 465, // Port 465 (SSL) is often more reliable on Render than 587 (STARTTLS)
+    secure: true,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      rejectUnauthorized: false, // Helps with certificate issues on some PaaS
-    },
-    connectionTimeout: 10000,
+    // This forces IPv4 at the socket level, solving Render's IPv6 routing issues
+    family: 4,
+    connectionTimeout: 20000, // 20 second timeout
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
   });
 
   try {
