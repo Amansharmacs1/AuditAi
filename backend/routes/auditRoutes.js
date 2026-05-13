@@ -208,7 +208,7 @@ router.get(
         await Audit.find({
 
           userEmail:
-            email,
+            email.toLowerCase().trim(),
 
         }).sort({
           createdAt: -1,

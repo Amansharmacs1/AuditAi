@@ -14,10 +14,39 @@ const createSessionToken = (email) =>
     { expiresIn: "5m" }
   );
 
+// QUICK LOGIN (Direct Email Entry)
+router.post("/quick-login", async (req, res) => {
+  try {
+    const email = req.body.email?.toLowerCase().trim();
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ email });
+    }
+
+    const token = createSessionToken(email);
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+
+    return res.json({
+      success: true,
+      token,
+      email,
+      expiresAt,
+      message: "Successfully logged in"
+    });
+  } catch (err) {
+    console.error("Quick Login Error:", err.message);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // SEND LOGIN LINK (Verification Flow)
 router.post("/send-link", async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = req.body.email?.toLowerCase().trim();
 
     if (!email) {
       return res.status(400).json({
@@ -73,12 +102,13 @@ router.post("/verify", async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid token type" });
     }
 
-    const sessionToken = createSessionToken(decoded.email);
+    const email = decoded.email.toLowerCase().trim();
+    const sessionToken = createSessionToken(email);
     const expiresAt = Date.now() + 5 * 60 * 1000;
 
     return res.json({
       success: true,
-      email: decoded.email,
+      email: email,
       token: sessionToken,
       expiresAt,
     });

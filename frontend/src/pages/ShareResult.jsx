@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { endpoints } from "../utils/apiConfig";
+import { downloadSingleAuditPdf } from "../utils/pdfReport";
 
 const COLORS = ["#4DA8DA", "#2E8BC0", "#145DA0", "#0B3C5D", "#1B4965"];
 
@@ -76,6 +77,21 @@ const ShareResult = () => {
 
   const shareOnLinkedIn = () => {
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, "_blank");
+  };
+
+  const handleDownloadPdf = () => {
+    downloadSingleAuditPdf({
+      filename: `audit-${shareId}.pdf`,
+      auditDate: new Date().toLocaleDateString(),
+      tools: data.map(t => ({
+        tool: t.name,
+        plan: t.plan,
+        cost: t.cost / t.seats, // get per-month cost back
+        seats: t.seats,
+        totalCost: t.cost
+      })),
+      summary: summary
+    });
   };
 
   // Loader
@@ -164,6 +180,9 @@ const ShareResult = () => {
                 </button>
                 <button className="btn btn-primary text-white fw-bold" onClick={shareOnLinkedIn} style={{ backgroundColor: "#0077b5", borderColor: "#0077b5" }}>
                   💼 LinkedIn
+                </button>
+                <button className="btn btn-success text-white fw-bold shadow-sm" onClick={handleDownloadPdf}>
+                   📄 Download PDF
                 </button>
               </div>
             </div>
