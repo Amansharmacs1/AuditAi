@@ -35,6 +35,7 @@ export const endpoints = {
   deleteAudit: (auditId) => getEndpoint(`/api/audit/${auditId}`),
 
   // Auth routes
+  quickLogin: () => getEndpoint('/api/auth/quick-login'),
   sendLink: () => getEndpoint('/api/auth/send-link'),
   verify: () => getEndpoint('/api/auth/verify'),
   setPassword: () => getEndpoint('/api/auth/set-password'),

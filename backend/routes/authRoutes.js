@@ -22,6 +22,37 @@ const createResetToken = (email) =>
   );
 
 
+// QUICK LOGIN (Direct Email Entry)
+// Warning: This bypasses email verification for simplicity/free-tier constraints.
+router.post("/quick-login", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ email });
+    }
+
+    const token = createSessionToken(email);
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+
+    return res.json({
+      success: true,
+      token,
+      email,
+      expiresAt,
+      hasPassword: Boolean(user.passwordHash),
+      message: "Successfully logged in"
+    });
+  } catch (err) {
+    console.error("Quick Login Error:", err.message);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // SEND LOGIN LINK
 router.post("/send-link", async (req, res) => {
 

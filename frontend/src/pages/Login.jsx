@@ -16,23 +16,19 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleSendLink = async () => {
-
+  const handleQuickLogin = async () => {
     try {
-
       setLoading(true);
       setError("");
       setMessage("");
 
       const res = await fetch(
-        endpoints.sendLink(),
+        endpoints.quickLogin(),
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({ email }),
         }
       );
@@ -40,23 +36,21 @@ const Login = () => {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError(
-          data.message ||
-            "Could not send verification link"
-        );
+        setError(data.message || "Could not log in");
         return;
       }
 
-      setMessage(data.message);
+      setSessionAuth({
+        token: data.token,
+        email: data.email,
+        expiresAt: data.expiresAt,
+      });
 
+      window.location.href = "/";
     } catch (err) {
-
-      console.log(err);
-
+      setError("Unable to login right now");
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -151,12 +145,12 @@ if (isSessionAuthenticated()) {
 
         <button
           className="btn btn-outline-primary w-100"
-          onClick={handleSendLink}
+          onClick={handleQuickLogin}
           disabled={loading}
         >
           {loading
-            ? "Sending..."
-            : "Send Verification Link"}
+            ? "Logging in..."
+            : "Quick Login / Signup"}
         </button>
 
         <div className="mt-3 text-center">

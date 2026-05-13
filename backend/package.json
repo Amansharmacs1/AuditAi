@@ -23,8 +23,7 @@
     "mongoose": "^9.6.1",
     "nanoid": "^3.3.7",
     "open": "^11.0.0",
-    "openai": "^6.36.0",
-    "resend": "^6.12.3"
+    "openai": "^6.36.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
