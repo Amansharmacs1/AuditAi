@@ -61,20 +61,20 @@ const sendAuditConfirmationEmail = async (toEmail, fullName, totalSavings, publi
 };
 
 /**
- * Sends a password reset link.
- * Expects template ID 'password_reset' in EmailJS
+ * Sends a login verification link.
+ * Expects template ID 'login_verify' in EmailJS
  */
-const sendPasswordResetEmail = async (toEmail, resetLink) => {
+const sendLoginVerificationEmail = async (toEmail, verifyLink) => {
   return sendEmail({
-    templateId: process.env.EMAILJS_RESET_TEMPLATE_ID || "password_reset",
+    templateId: process.env.EMAILJS_VERIFY_TEMPLATE_ID || "login_verify",
     templateParams: {
       to_email: toEmail,
-      resetLink: resetLink,
+      verifyLink: verifyLink,
     },
   });
 };
 
 module.exports = {
   sendAuditConfirmationEmail,
-  sendPasswordResetEmail,
+  sendLoginVerificationEmail,
 };

@@ -43,11 +43,7 @@ const Verify = () => {
             expiresAt: data.expiresAt,
           });
 
-          if (data.hasPassword) {
-            window.location.href = "/";
-          } else {
-            window.location.href = "/set-password";
-          }
+          window.location.href = "/";
 
         } else {
 

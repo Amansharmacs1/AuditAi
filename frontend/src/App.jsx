@@ -13,9 +13,6 @@ import ShareResult from "./pages/ShareResult";
 
 import Login from "./pages/Login";
 import Verify from "./pages/Verify";
-import SetPassword from "./pages/SetPassword";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -47,15 +44,6 @@ const App = () => {
               element={<Verify />}
             />
 
-            <Route
-              path="/forgot-password"
-              element={<ForgotPassword />}
-            />
-
-            <Route
-              path="/reset-password/:token"
-              element={<ResetPassword />}
-            />
 
             <Route
               path="/share/:shareId"
@@ -81,14 +69,6 @@ const App = () => {
               }
             />
 
-            <Route
-              path="/set-password"
-              element={
-                <ProtectedRoute>
-                  <SetPassword />
-                </ProtectedRoute>
-              }
-            />
 
             <Route
               path="/result"
