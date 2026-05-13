@@ -15,7 +15,7 @@ const getApiBaseUrl = () => {
     return 'http://localhost:8080';
   }
 
-  return 'https://auditai-8fb9.onrender.com';
+  return 'https://auditai-1.onrender.com';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
