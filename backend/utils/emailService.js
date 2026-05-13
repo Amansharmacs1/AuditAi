@@ -1,12 +1,21 @@
 const { Resend } = require("resend");
 
-// Initialize Resend if API key is present
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+let resendInstance = null;
+
+const getResend = () => {
+  if (resendInstance) return resendInstance;
+  if (process.env.RESEND_API_KEY) {
+    resendInstance = new Resend(process.env.RESEND_API_KEY);
+    return resendInstance;
+  }
+  return null;
+};
 
 /**
  * Generic internal function to send email via Resend.
  */
 const sendEmail = async ({ to, subject, html }) => {
+  const resend = getResend();
   if (!resend) {
     console.error("❌ Resend not initialized: RESEND_API_KEY is missing.");
     throw new Error("Email service is currently unavailable.");
