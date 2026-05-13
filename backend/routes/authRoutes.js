@@ -1,9 +1,7 @@
 const express = require("express");
-const dns = require('node:dns');
 const router = express.Router();
-
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
+const { sendLoginVerificationEmail, sendPasswordResetEmail } = require("../utils/emailService");
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/User");
@@ -59,45 +57,8 @@ router.post("/send-link", async (req, res) => {
     // verification link
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const verifyLink = `${frontendUrl}/verify/${token}`;
-    // Manual DNS lookup to force IPv4
-    const resolvedIp = await new Promise((resolve) => {
-      dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
-        resolve(address || '74.125.142.108'); // Fallback to a known Gmail SMTP IP
-      });
-    });
-
-    // nodemailer config
-    const transporter = nodemailer.createTransport({
-      host: resolvedIp,
-      port: 587,
-      secure: false,
-      servername: 'smtp.gmail.com',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
-      },
-      connectionTimeout: 10000,
-    });
-
     // send mail
-    await transporter.sendMail({
-      from: `"AuditAI" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "AuditAI Login Verification",
-      html: `
-        <div style="font-family:sans-serif">
-          <h2>Welcome to AuditAI 🚀</h2>
-          <p>Click the button below to login.</p>
-          <a href="${verifyLink}" style="background:#145DA0;color:white;padding:12px 20px;text-decoration:none;border-radius:6px;display:inline-block;margin-top:10px;">
-            Verify & Login
-          </a>
-          <p style="margin-top:20px">This link expires in 10 minutes.</p>
-        </div>
-      `,
-    });
+    await sendLoginVerificationEmail(email, verifyLink);
 
     return res.json({
       success: true,
@@ -276,39 +237,8 @@ router.post("/forgot-password", async (req, res) => {
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, "");
     const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
-    // Manual DNS lookup
-    const resolvedIp = await new Promise((resolve) => {
-      dns.lookup('smtp.gmail.com', { family: 4 }, (err, address) => {
-        resolve(address || '74.125.142.108');
-      });
-    });
-
-    const transporter = nodemailer.createTransport({
-      host: resolvedIp,
-      port: 587,
-      secure: false,
-      servername: 'smtp.gmail.com',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `"AuditAI" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "AuditAI Password Reset",
-      html: `
-        <div style="font-family:sans-serif">
-          <h2>Reset your AuditAI password</h2>
-          <p>Click the button below to set a new password.</p>
-          <a href="${resetLink}" style="background:#145DA0;color:white;padding:12px 20px;text-decoration:none;border-radius:6px;display:inline-block;margin-top:10px;">
-            Reset Password
-          </a>
-          <p style="margin-top:20px">This link expires in 10 minutes.</p>
-        </div>
-      `,
-    });
+    // send mail
+    await sendPasswordResetEmail(email, resetLink);
 
     return res.json({
       success: true,
