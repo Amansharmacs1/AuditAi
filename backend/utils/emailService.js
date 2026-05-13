@@ -1,69 +1,38 @@
-const nodemailer = require("nodemailer");
-const dns = require("node:dns");
 const { Resend } = require("resend");
 
 // Initialize Resend if API key is present
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 /**
- * Generic internal function to send email.
- * Prefers Resend (HTTP) for reliability on Render.
- * Falls back to Nodemailer (SMTP) with IPv4 forcing.
+ * Generic internal function to send email via Resend.
  */
 const sendEmail = async ({ to, subject, html }) => {
-  const fromEmail = process.env.EMAIL_USER || "noreply@auditai.com";
-  const fromName = "AuditAI";
-
-  // --- 1. TRY RESEND (Recommended for Render) ---
-  if (resend) {
-    try {
-      const { data, error } = await resend.emails.send({
-        from: `${fromName} <onboarding@resend.dev>`, // Default Resend domain unless verified
-        to,
-        subject,
-        html,
-      });
-
-      if (error) {
-        console.error("❌ Resend error:", error);
-        // Fall through to Nodemailer if Resend fails
-      } else {
-        console.log("📧 Email sent via Resend:", data.id);
-        return data;
-      }
-    } catch (err) {
-      console.error("❌ Resend failed, falling back to Nodemailer:", err.message);
-    }
+  if (!resend) {
+    console.error("❌ Resend not initialized: RESEND_API_KEY is missing.");
+    throw new Error("Email service is currently unavailable.");
   }
 
-  // --- 2. FALLBACK TO NODEMAILER (SMTP) ---
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465, // Port 465 (SSL) is often more reliable on Render than 587 (STARTTLS)
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    // This forces IPv4 at the socket level, solving Render's IPv6 routing issues
-    family: 4,
-    connectionTimeout: 20000, // 20 second timeout
-    greetingTimeout: 20000,
-    socketTimeout: 20000,
-  });
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const fromName = "AuditAI";
 
   try {
-    const info = await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
+    const { data, error } = await resend.emails.send({
+      from: `${fromName} <${fromEmail}>`,
       to,
       subject,
       html,
     });
-    console.log("📧 Email sent via Nodemailer:", info.messageId);
-    return info;
-  } catch (error) {
-    console.error("❌ All email methods failed:", error.message);
-    throw error;
+
+    if (error) {
+      console.error("❌ Resend error:", error);
+      throw new Error(error.message || "Failed to send email via Resend");
+    }
+
+    console.log("📧 Email sent via Resend:", data.id);
+    return data;
+  } catch (err) {
+    console.error("❌ Email sending failed:", err.message);
+    throw err;
   }
 };
 

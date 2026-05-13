@@ -1,148 +1,81 @@
-# AuditAI
+# AuditAI 🚀
 
-## Project Overview
+ **Stop overpaying for your AI stack.** AuditAI helps startups and small teams analyze their subscription spend and reclaim their budget.
 
-AuditAI is a smart AI spend optimization platform built to help startups, freelancers, and teams understand how much they are spending on AI tools and where they can reduce unnecessary costs.
+AuditAI is a spend optimization platform designed to shine a light on the "shadow stack" of AI tools. By auditing subscriptions like **ChatGPT, Claude, Gemini, Cursor, and GitHub Copilot**, we identify redundancies and generate actionable, AI-powered recommendations to keep your team productive without the waste[cite: 1, 2].
 
-The platform analyzes subscriptions and usage across tools like ChatGPT, Claude, Cursor, Gemini, and GitHub Copilot, then generates an easy-to-understand audit report with potential savings, smarter plan recommendations, and cost optimization insights.
-
-The main goal of AuditAI is to help teams save money on AI infrastructure without affecting productivity.
+Designed as a lead-generation tool, AuditAI bridges the gap between high-performance AI infrastructure and cost-efficiency.
 
 ---
 
-## Features
+## ✨ Key Features
 
-- Dynamic AI tool spend input form
-- AI-generated audit summaries
-- Monthly and yearly savings estimation
-- Shareable public audit links
-- Authentication and protected routes
-- Personal audit history dashboard
-- Lead capture functionality
-- PDF report export
-- Fully responsive modern UI
+### 🔍 Intelligence & Auditing
+* **Spend Audit Engine:** Deep analysis of per-tool costs vs. team utility.
+* **AI-Generated Summaries:** Personalized insights powered by Gemini for a human-readable breakdown of your spend.
+* **Savings Recommendations:** Specific, tool-by-tool suggestions on where to consolidate.
 
----
+### 🛡️ Security & Experience
+* **Lead Capture & Privacy:** Purpose-built for growth while ensuring public result pages are stripped of identifying user data[cite: 1, 2].
+* **Auth & Protected Routes:** Secure access for your team's audit history.
+* **PDF Export:** Professional reports ready for stakeholders.
 
-## Tech Stack
-
-### Frontend
-- React + Vite
-- Tailwind CSS
-- React Router
-- Axios
-
-### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- JWT Authentication
-
-### AI Integration
-- Gemini API
+### 🌐 Sharing & Scalability
+* **Public Sharing:** Unique, shareable URLs for audit results.
+* **Responsive UI:** A modern, clean interface built for speed and clarity[cite: 2].
+* **Audit History:** Track your optimization journey over time[cite: 2].
 
 ---
 
-## Getting Started
+## 🛠️ The Tech Stack
 
-### Frontend Setup
+AuditAI is built with a modern, high-performance stack for scalability and developer productivity[cite: 2].
 
-cd frontend
-npm install
-npm run dev
-
-
-### Backend Setup
-
-
-cd backend
-npm install
-npm run dev
-
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | React, Vite, Tailwind CSS, React Router[cite: 2] |
+| **Backend** | Node.js, Express.js[cite: 2] |
+| **Database** | MongoDB, Mongoose[cite: 2] |
+| **APIs** | Google Gemini (AI Engine), Resend (Email Infrastructure)[cite: 2] |
 
 ---
 
-## Environment Variables
+# 🚀 Getting Started
 
-Create a `.env` file inside the backend folder and add the following variables:
+### 📦 1. Clone & Setup
+* Run `git clone https://github.com/Amansharmacs1/AuditAi.git` to copy the repository.
+* Use `cd AuditAI` to enter the project directory[cite: 2].
 
+### 💻 2. Frontend Installation[cite: 2]
+* Navigate to the frontend directory: `cd frontend`[cite: 2].
+* Install dependencies: `npm install`[cite: 2].
+* Start the development server: `npm run dev`[cite: 2].
 
-PORT=
-MONGO_URI=
-JWT_SECRET=
-GEMINI_API_KEY=
-CLIENT_URL=
-EMAIL_USER=
-EMAIL_PASS=
-
-
----
-
-## Deployment
-
-- Frontend deployed on Vercel
-- Backend deployed on Render
+### ⚙️ 3. Backend Installation[cite: 2]
+* Navigate to the backend directory: `cd backend`[cite: 2].
+* Install dependencies: `npm install`[cite: 2].
+* Start the backend server: `npm run dev`[cite: 2].
 
 ---
 
-## Key Decisions & Thought Process
+# ⚙️ Environment Variables[cite: 2]
 
-### Why React + Vite?
-I used React with Vite because it provides a faster development experience, quick hot reloads, and a cleaner setup compared to traditional React configurations.
-
-### Why MongoDB?
-The audit data structure can change frequently depending on tool pricing and recommendations, so MongoDB’s flexible schema was a better fit.
-
-### Why Rule-Based Calculations?
-Instead of relying completely on AI for savings calculations, I used rule-based logic to ensure the recommendations stay accurate and consistent.
-
-### Why Authentication?
-Authentication was added to support:
-- Personal audit history
-- Protected routes
-- Saved reports for users
-
-Even though it was optional, it improved the overall product experience.
-
-### Separating AI Summary from Calculation Logic
-The AI-generated summary is handled separately from the actual savings calculations. This avoids inaccurate financial recommendations from generative AI responses.
+* Create a `.env` file in the `backend/` directory[cite: 2].
+* `PORT=8080` — The port for your local server[cite: 2].
+* `MONGO_URI=your_mongodb_uri` — Your MongoDB connection string[cite: 2].
+* `GEMINI_API_KEY=your_gemini_api_key` — Your Google AI API key[cite: 2].
+* `JWT_SECRET=your_secret` — The secret key for authentication[cite: 2].
+* `RESEND_API_KEY=your_resend_key` — Your key for email services[cite: 2].
 
 ---
 
-## How AuditAI Works
+# 🏗️ Decisions & Trade-offs[cite: 2]
 
-1. Users enter their AI tool usage and subscription details.
-2. The backend processes and validates the data.
-3. A rule-based engine calculates optimization opportunities and estimated savings.
-4. Gemini API generates a human-friendly audit summary.
-5. The report is stored in the database.
-6. Users can revisit, share, or export their reports anytime.
+* **Why Gemini?** We prioritized the Gemini API for its seamless integration and high performance during the development lifecycle[cite: 2].
+* **Why MongoDB?** The flexible schema of MongoDB was essential for handling dynamic audit data that varies by team size and toolset[cite: 2].
+* **Vite vs. Create-React-App:** We used Vite for near-instant hot module replacement (HMR) and a significantly faster build pipeline[cite: 2].
+* **Reliability Over Pure AI:** Audit calculations use rule-based logic for financial accuracy, while Gemini is reserved for humanizing the summary. This ensures the numbers are always correct[cite: 1, 2].
 
 ---
 
-## Authentication Flow
-
-- JWT-based authentication
-- Protected frontend routes
-- Token validation middleware
-- Persistent login sessions
-
----
-
-
-## Future Improvements
-
-- Team collaboration support
-- Real-time AI pricing updates
-- Advanced analytics dashboard
-- Stripe billing integration
-- Multi-workspace support
-- SaaS benchmarking system
-
----
-
-## Author
-
-Aman Sharma
-
-Built as part of the Credex Web Development Internship Assignment.
+### # Developed with ❤️ by the AuditAI Team.[cite: 2]
