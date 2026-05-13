@@ -1,4 +1,4 @@
-## Day 1 — 2026-05-06
+## Day 1 — 2026-05-07
 **Hours worked:** 2
 
 **What I did:**  
@@ -15,7 +15,7 @@ Work on the form functionality, connect backend APIs, and start saving audit dat
 
 ---
 
-## Day 2 — 2026-05-07
+## Day 2 — 2026-05-08
 **Hours worked:** 5
 
 **What I did:**  
@@ -32,7 +32,7 @@ Improve the result page formatting and start adding login/authentication functio
 
 ---
 
-## Day 3 — 2026-05-08
+## Day 3 — 2026-05-09
 
 **Hours worked:** 5
 
@@ -50,30 +50,72 @@ Improve the home page UI to make it look more modern and interactive. Add better
 
 ---
 
-## Day 4 — 2026-05-09
+## Day 4 — 2026-05-10
 
 **Hours worked:** 6
 
-**What I did:**
-Focused mainly on improving the frontend experience and making the project feel more polished overall. Redesigned parts of the home page UI with better layouts, gradients, hover effects, and cleaner sections to make the platform look more modern. Added lead capture functionality before showing audit results and connected it with backend storage. Also worked on generating public shareable audit links and started building the public result page where users can share their optimization reports. Improved the audit calculation logic to make savings recommendations more realistic and business-oriented instead of overly aggressive AI-generated outputs.
+**What I did:**  
+Focused mainly on improving the frontend experience and making the project feel more polished overall. Redesigned parts of the home page UI with better layouts, gradients, hover effects, and cleaner sections to make the platform look more modern. Added lead capture functionality before showing audit results and connected it with backend storage. Also worked on generating public shareable audit links and started building the public result page where users can share their optimization reports.
 
-**What I learned:**
-Learned how public/private audit sharing flows work and how to safely expose audit data without leaking sensitive user information. Also got better understanding of conditional rendering, reusable UI components, and improving user experience through frontend design patterns.
+**What I learned:**  
+Learned how public/private audit sharing flows work and how to safely expose audit data without leaking sensitive user information. Also got better understanding of conditional rendering and reusable frontend components.
 
-**Blockers / what I'm stuck on:**
-Faced issues with package imports and dependency conflicts while integrating new UI components. Also spent time debugging some incorrect savings calculations and unrealistic AI recommendations.
+**Blockers / what I'm stuck on:**  
+Faced dependency conflicts while integrating new UI packages and spent time fixing some incorrect savings calculations from AI-generated responses.
 
-**Plan for tomorrow:**
-Complete the shareable audit page flow, improve responsiveness for mobile devices, and add final polish like loading states, animations, and better error handling across the app.
+**Plan for tomorrow:**  
+Improve authentication flow further and polish protected route handling across the application.
 
 ---
 
-## Day 5 — 2026-05-10
+## Day 5 — 2026-05-11
 
 **Hours worked:** 2
 
-**What I did:**
-Focused on polishing and improving the authentication flow across the platform. Refined login, signup, and protected route handling to make the user experience smoother and more reliable. Improved session handling and validation logic to reduce unnecessary errors during authentication. Also cleaned up some backend auth-related code and tested different user flows like login persistence, logout handling, and access control for protected pages.
+**What I did:**  
+Focused on polishing and improving the authentication system. Improved login and signup flow, fixed protected route issues, and tested session persistence across refreshes. Also cleaned up backend auth logic and improved validation handling for unauthorized access.
 
-**What I learned:**
-Learned more about managing authentication state efficiently in React and handling edge cases in protected routes and token-based session
+**What I learned:**  
+Learned more about managing authentication state in React and handling token/session-based access flow between frontend and backend.
+
+**Blockers / what I'm stuck on:**  
+Faced some issues with route redirection and localStorage session handling during logout/login transitions.
+
+**Plan for tomorrow:**  
+Work on final project testing, responsiveness improvements, and overall UI cleanup.
+
+---
+
+## Day 6 — 2026-05-12
+
+**Hours worked:** 3
+
+**What I did:**  
+Worked on final testing and fixing small bugs across the application. Improved mobile responsiveness, cleaned up some UI inconsistencies, optimized API handling, and tested complete user flows from signup to audit generation and public sharing. Also improved error handling and loading states.
+
+**What I learned:**  
+Learned how small UI and UX improvements significantly improve the overall feel of a product. Also got more comfortable debugging frontend/backend integration issues.
+
+**Blockers / what I'm stuck on:**  
+Had occasional issues with API deployment environment variables and MongoDB connection stability during testing.
+
+**Plan for tomorrow:**  
+Finalize deployment and prepare project documentation files.
+
+---
+
+## Day 7 — 2026-05-13
+
+**Hours worked:** 4
+
+**What I did:**  
+Finalized deployment of both frontend and backend applications using Vercel and Render. Completed all required documentation files including README, architecture notes, pricing logic, and reflection documents. Tested production deployment links, verified APIs, and cleaned up the repository structure before final submission.
+
+**What I learned:**  
+Learned more about deployment workflows, environment variable management in production, and final-stage project optimization/testing.
+
+**Blockers / what I'm stuck on:**  
+Faced some deployment issues related to environment variables and API keys initially, but resolved them after debugging production configs.
+
+**Plan for tomorrow:**  
+Project submission and final review.
